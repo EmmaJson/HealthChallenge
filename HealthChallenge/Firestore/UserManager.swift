@@ -16,7 +16,6 @@ struct DbUser: Codable {
     let photoURL: String?
     let preferences: [String]?
     let favouriteChallenge: Challenge?
-    let username: String?
 
     init(auth: AuthDataResultModel) {
         self.userId = auth.uid
@@ -26,7 +25,6 @@ struct DbUser: Codable {
         self.photoURL = auth.photoURL
         self.preferences = nil
         self.favouriteChallenge = nil
-        self.username = nil
     }
     
     init(
@@ -36,8 +34,7 @@ struct DbUser: Codable {
         email: String?,
         photoURL: String?,
         preferences: [String]?,
-        favouriteChallenge: Challenge? = nil,
-        username: String?
+        favouriteChallenge: Challenge? = nil
     ) {
         self.userId = userId
         self.isAnonymous = isAnonymous
@@ -46,7 +43,6 @@ struct DbUser: Codable {
         self.photoURL = photoURL
         self.preferences = preferences
         self.favouriteChallenge = favouriteChallenge
-        self.username = username
     }
     
     enum CodingKeys: String, CodingKey {
@@ -57,7 +53,6 @@ struct DbUser: Codable {
         case photoURL               =   "photo_url"
         case preferences            =   "preferences"
         case favouriteChallenge     =   "favourite_challenge"
-        case username               =   "username"
     }
     
     init(from decoder: any Decoder) throws {
@@ -69,7 +64,6 @@ struct DbUser: Codable {
         self.photoURL = try container.decodeIfPresent(String.self, forKey: .photoURL)
         self.preferences = try container.decodeIfPresent([String].self, forKey: .preferences)
         self.favouriteChallenge = try container.decodeIfPresent(Challenge.self, forKey: .favouriteChallenge)
-        self.username = try container.decodeIfPresent(String.self, forKey: .username)
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -81,7 +75,6 @@ struct DbUser: Codable {
         try container.encodeIfPresent(self.photoURL, forKey: .photoURL)
         try container.encodeIfPresent(self.preferences, forKey: .preferences)
         try container.encodeIfPresent(self.favouriteChallenge, forKey: .favouriteChallenge)
-        try container.encodeIfPresent(self.username, forKey: .username)
     }
 }
 
@@ -106,11 +99,6 @@ final class UserManager {
     //        decoder.keyDecodingStrategy = .convertFromSnakeCase
             return decoder
         }()
-    
-    func updateUsername(userId: String, newUsername: String) async throws {
-        let userRef = Firestore.firestore().collection("users").document(userId)
-        try await userRef.updateData(["username": newUsername])
-    }
     
     func createNewUser(user: DbUser) async throws {
         try userDocument(userId: user.userId).setData(from: user, merge: false)

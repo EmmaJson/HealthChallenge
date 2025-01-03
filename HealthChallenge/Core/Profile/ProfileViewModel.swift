@@ -52,17 +52,4 @@ final class ProfileViewModel: ObservableObject {
             self.user = try await UserManager.shared.getUser(userId: user.userId)
         }
     }
-    
-    func updateUsername() {
-        guard let user else { return }
-        Task {
-            do {
-                try await UserManager.shared.updateUsername(userId: user.userId, newUsername: username)
-                print("\(username) updated")
-                self.user = try await UserManager.shared.getUser(userId: user.userId) // Refresh user data
-            } catch {
-                print("Failed to update username: \(error.localizedDescription)")
-            }
-        }
-    }
 }

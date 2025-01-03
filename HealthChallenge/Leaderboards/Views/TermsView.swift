@@ -8,21 +8,23 @@
 import SwiftUI
 
 struct TermsView: View {
-    @StateObject var viewModel = ProfileViewModel()
-    @Environment(\.dismiss) var dismiss
+    @AppStorage("username") var username: String?
+
+    @Binding var showTerms: Bool
+    
     @State var name = ""
     @State var acceptTerms = false
 
     var body: some View {
         VStack {
-            Text("Leaderboard")
+            Text("Accept the terms and conditions")
                 .font(.largeTitle)
                 .bold()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
                 .padding(.bottom, 10)
                         
-            TextField("Username", text: $viewModel.username)
+            TextField("Displayed username...", text: $name)
                 .padding()
                 .background(Color.gray.opacity(0.4))
                 .cornerRadius(10)
@@ -45,7 +47,8 @@ struct TermsView: View {
             
             Button {
                 if acceptTerms && name.count > 3 {
-                    viewModel.updateUsername()
+                    username = name
+                    showTerms = false
                 }
             } label: {
                 Text("Continue")
@@ -63,5 +66,5 @@ struct TermsView: View {
 }
 
 #Preview {
-    TermsView()
+    TermsView(showTerms: .constant(true))
 }

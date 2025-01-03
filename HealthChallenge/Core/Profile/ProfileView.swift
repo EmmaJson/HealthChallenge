@@ -36,28 +36,16 @@ struct ProfileView: View {
                     .overlay(Circle().stroke(Color.white, lineWidth: 2))
                     .padding()
 
-                Text(viewModel.user?.username ?? "")
+                Text(UserDefaults.standard.string(forKey: "username") ?? "")
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
 
-                if viewModel.user?.username == nil {
-                    TextField("Set Your Username", text: $viewModel.username)
-                        .background(Color.background.opacity(0.8))
-                        .cornerRadius(10)
-                        .frame(maxWidth:260)
-                        .padding(5)
-                    
-                    Button("Update Username") {
-                        if !viewModel.username.isEmpty {
-                            viewModel.updateUsername()
-                        }
-                    }   .font(.headline)
+                if UserDefaults.standard.string(forKey: "username") == nil {
+                    Text("Anonymous")
+                        .font(.title)
+                        .fontWeight(.bold)
                         .foregroundColor(.white)
-                        .frame(height:40)
-                        .frame(maxWidth:160)
-                        .background(Color.colorBlue)
-                        .cornerRadius(10)
                 }
             }
         }

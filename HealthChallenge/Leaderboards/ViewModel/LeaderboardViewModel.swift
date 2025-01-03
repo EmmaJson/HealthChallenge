@@ -16,10 +16,8 @@ class LeaderboardViewModel: ObservableObject {
         email: nil,
         photoURL: nil,
         preferences: nil,
-        favouriteChallenge: nil,
-        username: nil
+        favouriteChallenge: nil
     )
-    @Published var currentUsername: String = ""
     @Published var leaderResult = LeaderboardResult(user: nil, top10: [])
     var mockData = [
         LeaderboardUser(id: "1",  username: "Emma", count: 2342),
@@ -42,38 +40,29 @@ class LeaderboardViewModel: ObservableObject {
     init() {
         Task {
             do {
-                await fetchLoggedInUserId()
-                try await postStepCountUpdateForUser()
-                let result = try await fecthLeaderboard()
-                DispatchQueue.main.async {
-                    self.leaderResult = result
-                }
+                try await updateLeaderboard()
             } catch {
                 print(error.localizedDescription)
             }
         }
     }
     
-    func updateLeaderboard() {
-        Task {
-            do {
-                await fetchLoggedInUserId()
-                try await postStepCountUpdateForUser()
-                let result = try await fecthLeaderboard()
-                DispatchQueue.main.async {
-                    self.leaderResult = result
-                }
-            } catch {
-                print(error.localizedDescription)
-            }
+    func updateLeaderboard() async throws {
+        await fetchLoggedInUserId()
+        try await postStepCountUpdateForUser()
+        let result = try await fecthLeaderboard()
+        DispatchQueue.main.async {
+            self.leaderResult = result
         }
+        
+        
     }
     
     
     private func fecthLeaderboard() async throws -> LeaderboardResult {
         let leaders = try await LeaderboardManager.sharded.fetchLeaderboards()
         let top10 = Array(leaders.sorted(by: { $0.count > $1.count }).prefix(10))
-        let username = self.currentUsername
+        let username = UserDefaults.standard.string(forKey: "username")
 
         if !top10.contains(where: { $0.username == username }) {
             let user = leaders.first(where: { $0.username == username })
@@ -85,8 +74,11 @@ class LeaderboardViewModel: ObservableObject {
 
     
     private func postStepCountUpdateForUser() async throws {
+        guard let username = UserDefaults.standard.string(forKey: "username") else {
+            throw URLError(.badURL)
+        }
         let steps =  try await fetchCurrentWeekStepCount()
-        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: currentUser.userId ?? "", username: currentUser.username ?? "", count: Int(steps)))
+        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: currentUser.userId, username: username, count: Int(steps)))
         try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "t8xV64HGDuNuWN9SMsb0TsXh5kk1", username: "Lova", count: Int(12323)))
         try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "YYKEJE5AMCND575bHLJN80L95yg1", username: "Julia", count: Int(9345)))
     }
@@ -106,9 +98,6 @@ class LeaderboardViewModel: ObservableObject {
             
             DispatchQueue.main.async {
                 self.currentUser = currentUser
-                self.currentUsername = currentUser.username ?? ""
-                print("\(self.currentUsername) logged in")
-
             }
         } catch {
             print("Error fetching logged-in user: \(error.localizedDescription)")

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct HomeTabView: View {
+    @AppStorage("username") var username: String?
     @StateObject var viewModel = LeaderboardViewModel()
     @State var selectedTab = "Home"
     @Binding var showSignInView: Bool
@@ -44,9 +45,7 @@ struct HomeTabView: View {
                 }
         }
         .onAppear {
-            viewModel.updateLeaderboard()
-            print("logged in user: \(viewModel.currentUsername)")
-            showTermsView = viewModel.currentUsername == ""
+            showTermsView = username == nil
         }
     }
 }
