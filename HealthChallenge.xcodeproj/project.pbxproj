@@ -1,0 +1,671 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0FBF1DA92D1CCA9D00714012 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 0FBF1DA82D1CCA9D00714012 /* FirebaseAnalytics */; };
+		0FBF1DAC2D1CCE1A00714012 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 0FBF1DAB2D1CCE1A00714012 /* FirebaseAuth */; };
+		0FBF1DCE2D20551400714012 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 0FBF1DCD2D20551400714012 /* GoogleSignIn */; };
+		0FBF1DD02D20551400714012 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0FBF1DCF2D20551400714012 /* GoogleSignInSwift */; };
+		0FBF1DDC2D20F10E00714012 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 0FBF1DDB2D20F10E00714012 /* FirebaseFirestore */; };
+		0FBF1E622D2301CB00714012 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 0FBF1E612D2301CB00714012 /* FirebaseMessaging */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0FBF1D892D1CC80D00714012 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0FBF1D6E2D1CC80C00714012 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0FBF1D752D1CC80C00714012;
+			remoteInfo = HealthChallenge;
+		};
+		0FBF1D932D1CC80D00714012 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0FBF1D6E2D1CC80C00714012 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0FBF1D752D1CC80C00714012;
+			remoteInfo = HealthChallenge;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0FBF1D762D1CC80C00714012 /* HealthChallenge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HealthChallenge.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FBF1D882D1CC80D00714012 /* HealthChallengeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HealthChallengeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FBF1D922D1CC80D00714012 /* HealthChallengeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HealthChallengeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		0FBF1DD22D20557700714012 /* Exceptions for "HealthChallenge" folder in "HealthChallenge" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 0FBF1D752D1CC80C00714012 /* HealthChallenge */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		0FBF1D782D1CC80C00714012 /* HealthChallenge */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				0FBF1DD22D20557700714012 /* Exceptions for "HealthChallenge" folder in "HealthChallenge" target */,
+			);
+			path = HealthChallenge;
+			sourceTree = "<group>";
+		};
+		0FBF1D8B2D1CC80D00714012 /* HealthChallengeTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = HealthChallengeTests;
+			sourceTree = "<group>";
+		};
+		0FBF1D952D1CC80D00714012 /* HealthChallengeUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = HealthChallengeUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0FBF1D732D1CC80C00714012 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0FBF1E622D2301CB00714012 /* FirebaseMessaging in Frameworks */,
+				0FBF1DA92D1CCA9D00714012 /* FirebaseAnalytics in Frameworks */,
+				0FBF1DAC2D1CCE1A00714012 /* FirebaseAuth in Frameworks */,
+				0FBF1DCE2D20551400714012 /* GoogleSignIn in Frameworks */,
+				0FBF1DDC2D20F10E00714012 /* FirebaseFirestore in Frameworks */,
+				0FBF1DD02D20551400714012 /* GoogleSignInSwift in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0FBF1D852D1CC80D00714012 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0FBF1D8F2D1CC80D00714012 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0FBF1D6D2D1CC80C00714012 = {
+			isa = PBXGroup;
+			children = (
+				0FBF1D782D1CC80C00714012 /* HealthChallenge */,
+				0FBF1D8B2D1CC80D00714012 /* HealthChallengeTests */,
+				0FBF1D952D1CC80D00714012 /* HealthChallengeUITests */,
+				0FBF1DAA2D1CCE1A00714012 /* Frameworks */,
+				0FBF1D772D1CC80C00714012 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0FBF1D772D1CC80C00714012 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0FBF1D762D1CC80C00714012 /* HealthChallenge.app */,
+				0FBF1D882D1CC80D00714012 /* HealthChallengeTests.xctest */,
+				0FBF1D922D1CC80D00714012 /* HealthChallengeUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0FBF1DAA2D1CCE1A00714012 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0FBF1D752D1CC80C00714012 /* HealthChallenge */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0FBF1D9C2D1CC80D00714012 /* Build configuration list for PBXNativeTarget "HealthChallenge" */;
+			buildPhases = (
+				0FBF1D722D1CC80C00714012 /* Sources */,
+				0FBF1D732D1CC80C00714012 /* Frameworks */,
+				0FBF1D742D1CC80C00714012 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				0FBF1D782D1CC80C00714012 /* HealthChallenge */,
+			);
+			name = HealthChallenge;
+			packageProductDependencies = (
+				0FBF1DA82D1CCA9D00714012 /* FirebaseAnalytics */,
+				0FBF1DAB2D1CCE1A00714012 /* FirebaseAuth */,
+				0FBF1DCD2D20551400714012 /* GoogleSignIn */,
+				0FBF1DCF2D20551400714012 /* GoogleSignInSwift */,
+				0FBF1DDB2D20F10E00714012 /* FirebaseFirestore */,
+				0FBF1E612D2301CB00714012 /* FirebaseMessaging */,
+			);
+			productName = HealthChallenge;
+			productReference = 0FBF1D762D1CC80C00714012 /* HealthChallenge.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0FBF1D872D1CC80D00714012 /* HealthChallengeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0FBF1D9F2D1CC80D00714012 /* Build configuration list for PBXNativeTarget "HealthChallengeTests" */;
+			buildPhases = (
+				0FBF1D842D1CC80D00714012 /* Sources */,
+				0FBF1D852D1CC80D00714012 /* Frameworks */,
+				0FBF1D862D1CC80D00714012 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0FBF1D8A2D1CC80D00714012 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0FBF1D8B2D1CC80D00714012 /* HealthChallengeTests */,
+			);
+			name = HealthChallengeTests;
+			packageProductDependencies = (
+			);
+			productName = HealthChallengeTests;
+			productReference = 0FBF1D882D1CC80D00714012 /* HealthChallengeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		0FBF1D912D1CC80D00714012 /* HealthChallengeUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0FBF1DA22D1CC80D00714012 /* Build configuration list for PBXNativeTarget "HealthChallengeUITests" */;
+			buildPhases = (
+				0FBF1D8E2D1CC80D00714012 /* Sources */,
+				0FBF1D8F2D1CC80D00714012 /* Frameworks */,
+				0FBF1D902D1CC80D00714012 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0FBF1D942D1CC80D00714012 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0FBF1D952D1CC80D00714012 /* HealthChallengeUITests */,
+			);
+			name = HealthChallengeUITests;
+			packageProductDependencies = (
+			);
+			productName = HealthChallengeUITests;
+			productReference = 0FBF1D922D1CC80D00714012 /* HealthChallengeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0FBF1D6E2D1CC80C00714012 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1610;
+				LastUpgradeCheck = 1610;
+				TargetAttributes = {
+					0FBF1D752D1CC80C00714012 = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					0FBF1D872D1CC80D00714012 = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = 0FBF1D752D1CC80C00714012;
+					};
+					0FBF1D912D1CC80D00714012 = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = 0FBF1D752D1CC80C00714012;
+					};
+				};
+			};
+			buildConfigurationList = 0FBF1D712D1CC80C00714012 /* Build configuration list for PBXProject "HealthChallenge" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0FBF1D6D2D1CC80C00714012;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				0FBF1DA72D1CCA9D00714012 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				0FBF1DCC2D20551400714012 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0FBF1D772D1CC80C00714012 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0FBF1D752D1CC80C00714012 /* HealthChallenge */,
+				0FBF1D872D1CC80D00714012 /* HealthChallengeTests */,
+				0FBF1D912D1CC80D00714012 /* HealthChallengeUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0FBF1D742D1CC80C00714012 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0FBF1D862D1CC80D00714012 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0FBF1D902D1CC80D00714012 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0FBF1D722D1CC80C00714012 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0FBF1D842D1CC80D00714012 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0FBF1D8E2D1CC80D00714012 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0FBF1D8A2D1CC80D00714012 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0FBF1D752D1CC80C00714012 /* HealthChallenge */;
+			targetProxy = 0FBF1D892D1CC80D00714012 /* PBXContainerItemProxy */;
+		};
+		0FBF1D942D1CC80D00714012 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0FBF1D752D1CC80C00714012 /* HealthChallenge */;
+			targetProxy = 0FBF1D932D1CC80D00714012 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0FBF1D9A2D1CC80D00714012 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		0FBF1D9B2D1CC80D00714012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0FBF1D9D2D1CC80D00714012 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = HealthChallenge/HealthChallenge.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"HealthChallenge/Preview Content\"";
+				DEVELOPMENT_TEAM = U9XY76RX4Q;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HealthChallenge/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs access to your health data to track your activity.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to write health data to your Health app.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = se.kth.emmajoh2.HealthChallenge;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0FBF1D9E2D1CC80D00714012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = HealthChallenge/HealthChallenge.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"HealthChallenge/Preview Content\"";
+				DEVELOPMENT_TEAM = U9XY76RX4Q;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HealthChallenge/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs access to your health data to track your activity.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs to write health data to your Health app.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = se.kth.emmajoh2.HealthChallenge;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		0FBF1DA02D1CC80D00714012 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U9XY76RX4Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = se.kth.emmajoh2.HealthChallengeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HealthChallenge.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HealthChallenge";
+			};
+			name = Debug;
+		};
+		0FBF1DA12D1CC80D00714012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U9XY76RX4Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = se.kth.emmajoh2.HealthChallengeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HealthChallenge.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HealthChallenge";
+			};
+			name = Release;
+		};
+		0FBF1DA32D1CC80D00714012 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U9XY76RX4Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = se.kth.emmajoh2.HealthChallengeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HealthChallenge;
+			};
+			name = Debug;
+		};
+		0FBF1DA42D1CC80D00714012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U9XY76RX4Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = se.kth.emmajoh2.HealthChallengeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HealthChallenge;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0FBF1D712D1CC80C00714012 /* Build configuration list for PBXProject "HealthChallenge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0FBF1D9A2D1CC80D00714012 /* Debug */,
+				0FBF1D9B2D1CC80D00714012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0FBF1D9C2D1CC80D00714012 /* Build configuration list for PBXNativeTarget "HealthChallenge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0FBF1D9D2D1CC80D00714012 /* Debug */,
+				0FBF1D9E2D1CC80D00714012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0FBF1D9F2D1CC80D00714012 /* Build configuration list for PBXNativeTarget "HealthChallengeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0FBF1DA02D1CC80D00714012 /* Debug */,
+				0FBF1DA12D1CC80D00714012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0FBF1DA22D1CC80D00714012 /* Build configuration list for PBXNativeTarget "HealthChallengeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0FBF1DA32D1CC80D00714012 /* Debug */,
+				0FBF1DA42D1CC80D00714012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0FBF1DA72D1CCA9D00714012 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.6.0;
+			};
+		};
+		0FBF1DCC2D20551400714012 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0FBF1DA82D1CCA9D00714012 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0FBF1DA72D1CCA9D00714012 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		0FBF1DAB2D1CCE1A00714012 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0FBF1DA72D1CCA9D00714012 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		0FBF1DCD2D20551400714012 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0FBF1DCC2D20551400714012 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		0FBF1DCF2D20551400714012 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0FBF1DCC2D20551400714012 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		0FBF1DDB2D20F10E00714012 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0FBF1DA72D1CCA9D00714012 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		0FBF1E612D2301CB00714012 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0FBF1DA72D1CCA9D00714012 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 0FBF1D6E2D1CC80C00714012 /* Project object */;
+}
