@@ -2,7 +2,7 @@
 //  Utilities.swift
 //  HealthChallenge
 //
-//  Created by Lova Thorén on 2024-12-28.
+//  Created by Emma Johansson on 2024-12-28.
 //
 
 import Foundation
