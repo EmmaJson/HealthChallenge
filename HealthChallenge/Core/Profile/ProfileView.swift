@@ -8,6 +8,15 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @AppStorage("profilePicture") var profilePicture: String?
+    @AppStorage("profileName") var username: String?
+    
+    @State private var isEditingProfilePicture = false
+    @State private var selectedImage: String = "avatar 20"
+    
+    @State private var images = ["avatar 1", "avatar 2", "avatar 3", "avatar 4", "avatar 5", "avatar 6", "avatar 7", "avatar 8", "avatar 9", "avatar 10", "avatar 11", "avatar 12", "avatar 13", "avatar 14", "avatar 15", "avatar 16", "avatar 17", "avatar 18", "avatar 19", "avatar 20"
+    ]
+
     @StateObject private var viewModel = ProfileViewModel()
     @Binding var showSignInView: Bool
     
@@ -15,81 +24,120 @@ struct ProfileView: View {
     private func preferenceIsSelected(text: String) -> Bool {
         return viewModel.user?.preferences?.contains(text) == true
     }
-
+    
     var body: some View {
-        ZStack {
-            LinearGradient(
-                colors: [Color.purple, Color.blue],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .frame(height: 300)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-
-            VStack(spacing: 10) {
-                Image(systemName: "person.circle.fill")
+        VStack {
+            HStack {
+                Image(profilePicture ?? "avatar 20")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 120, height: 120)
-                    .foregroundColor(.white)
-                    .background(Circle().fill(Color.white.opacity(0.2)))
-                    .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                    .padding()
-
-                Text(UserDefaults.standard.string(forKey: "username") ?? "")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-
-                if UserDefaults.standard.string(forKey: "username") == nil {
-                    Text("Anonymous")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                }
-            }
-        }
-        .padding()
-
-        List {
-            if let user = viewModel.user {
-                Text("Email: \(user.email ?? "Anonymous")")
-                Text("User ID: \(user.userId)")
-                
-                VStack {
-                    HStack {
-                        ForEach(preferenceOptions, id: \.self) { string in
-                            Button(string) {
-                                if preferenceIsSelected(text: string) {
-                                    viewModel.removeUserPreference(text: string)
-                                } else {
-                                    viewModel.addUserPreference(text: string)
-                                }
-                            }
-                            .font(.headline)
-                            .buttonStyle(.borderedProminent)
-                            .fixedSize()
-                            .tint(preferenceIsSelected(text: string) ? .blue : .gray)
+                    .frame(width: 100, height: 100)
+                    .padding(.all, 8)
+                    .onTapGesture {
+                        withAnimation(.easeInOut(duration: 0.05)) {
+                            isEditingProfilePicture.toggle()
                         }
                     }
-                }
-                Text("User preferences: \((user.preferences ?? []).joined(separator: ", "))")
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Button {
-                    if user.favouriteChallenge == nil {
-                        viewModel.addFavouriteChallenge()
-                    } else {
-                        viewModel.removeFavouriteChallenge()
+                VStack(alignment: .leading) {
+                    Text("Good Morning, ")
+                        .font(.largeTitle)
+                        .foregroundColor(.accent)
+                    
+                    Text(username ?? "Anonymous")
+                        .font(.title2)
+                }
+                Spacer()
+            }
+      
+            VStack {
+                
+                ProfileEditButton(image: "square.and.pencil", title: "Edit Profile Picture") {
+                    withAnimation(.easeInOut(duration: 0.05)) {
+                        isEditingProfilePicture.toggle()
                     }
-                } label: {
-                    Text("Favourite Challenge: \(user.favouriteChallenge?.title ?? "")")
+                }
+                
+                if isEditingProfilePicture {
+                    ProfilePictureEditor(selectedImage: $selectedImage, isEditing: $isEditingProfilePicture, images: images)
+                        .transition(.scale)
+                }
+                
+                
+                ProfileEditButton(image: "square.and.pencil", title: "Edit Username") {
+                    print("Button: username")
                 }
             }
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(.accent.opacity(0.1))
+            )
+            
+            VStack {
+                ProfileEditButton(image: "envelope", title: "Contact Us") {
+                    print("Button: contact")
+                }
+                ProfileEditButton(image: "text.document", title: "Privacy Policy") {
+                    print("Button: privacy policy")
+                }
+                ProfileEditButton(image: "text.document", title: "Terms of Service") {
+                    print("Button: terms of service")
+                }
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(.accent.opacity(0.1))
+            )
+            
         }
-        .task {
-            try? await viewModel.loadCurrentUser()
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .onAppear {
+            selectedImage = profilePicture ?? "avatar 20"
         }
+        
+        /*
+         List {
+         if let user = viewModel.user {
+         Text("Email: \(user.email ?? "Anonymous")")
+         Text("User ID: \(user.userId)")
+         
+         VStack {
+         HStack {
+         ForEach(preferenceOptions, id: \.self) { string in
+         Button(string) {
+         if preferenceIsSelected(text: string) {
+         viewModel.removeUserPreference(text: string)
+         } else {
+         viewModel.addUserPreference(text: string)
+         }
+         }
+         .font(.headline)
+         .buttonStyle(.borderedProminent)
+         .fixedSize()
+         .tint(preferenceIsSelected(text: string) ? .blue : .gray)
+         }
+         }
+         }
+         Text("User preferences: \((user.preferences ?? []).joined(separator: ", "))")
+         .frame(maxWidth: .infinity, alignment: .leading)
+         
+         Button {
+         if user.favouriteChallenge == nil {
+         viewModel.addFavouriteChallenge()
+         } else {
+         viewModel.removeFavouriteChallenge()
+         }
+         } label: {
+         Text("Favourite Challenge: \(user.favouriteChallenge?.title ?? "")")
+         }
+         }
+         }
+         
+         .task {
+         try? await viewModel.loadCurrentUser()
+         }
+         */
         .navigationBarTitle("Profile")
     }
 }
