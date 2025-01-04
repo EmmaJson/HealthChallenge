@@ -42,27 +42,13 @@ final class HealthKitViewModel: ObservableObject {
         didSet { fetchData() }
     }
     
-    @Published var isLoading = true
-
     private var healthKitManager = HealthKitManager.shared
 
     init() {
-        requestAuthorization()
         fetchData()
     }
 
-    private func requestAuthorization() {
-        healthKitManager.requestAuthorization { success, error in
-            if !success {
-                DispatchQueue.main.async {
-                    self.errorMessage = error?.localizedDescription ?? "Authorization failed."
-                }
-            }
-        }
-    }
-
     func fetchData() {
-        isLoading = true
         let now = Date()
         let calendar = Calendar.current
         var startDate: Date
@@ -75,12 +61,12 @@ final class HealthKitViewModel: ObservableObject {
             endDate = calendar.date(byAdding: .day, value: 1, to: startDate)!
             interval = .hour
         case .week:
-            startDate = calendar.date(byAdding: .day, value: -6, to: now)!
-            endDate = now
+            startDate = Date.startOfWeek
+            endDate = calendar.date(byAdding: .day, value: 6, to: startDate)!
             interval = .day
         case .month:
             startDate = calendar.date(byAdding: .month, value: -1, to: now)!
-            endDate = now
+            endDate = calendar.date(from: calendar.dateComponents([.year, .month, .day], from: now))!
             interval = .day
         case .year:
             endDate = calendar.date(from: calendar.dateComponents([.year, .month], from: now))!
@@ -113,7 +99,6 @@ final class HealthKitViewModel: ObservableObject {
                         self?.total = (self?.average ?? 0) * 365
                     }
                 }
-                self?.isLoading = false
             }
         }
     }
@@ -133,7 +118,6 @@ final class HealthKitViewModel: ObservableObject {
                         self?.total = (self?.average ?? 0) * 365
                     }
                 }
-                self?.isLoading = false
             }
         }
     }
@@ -153,7 +137,6 @@ final class HealthKitViewModel: ObservableObject {
                         self?.total = (self?.average ?? 0) * 365
                     }
                 }
-                self?.isLoading = false
             }
         }
     }

@@ -9,8 +9,10 @@ import SwiftUI
 
 struct ProfileView: View {
     @AppStorage("profilePicture") var profilePicture: String?
-    @AppStorage("profileName") var username: String?
+    @AppStorage("profileName") var profileName: String?
     
+    @State private var isEditingName = true
+    @State private var currentName = ""
     @State private var isEditingProfilePicture = false
     @State private var selectedImage: String = "avatar 20"
     
@@ -41,10 +43,10 @@ struct ProfileView: View {
                 
                 VStack(alignment: .leading) {
                     Text("Good Morning, ")
-                        .font(.largeTitle)
+                        .font(.title)
                         .foregroundColor(.accent)
                     
-                    Text(username ?? "Anonymous")
+                    Text(profileName ?? "Anonymous")
                         .font(.title2)
                 }
                 Spacer()
@@ -54,6 +56,7 @@ struct ProfileView: View {
                 
                 ProfileEditButton(image: "square.and.pencil", title: "Edit Profile Picture") {
                     withAnimation(.easeInOut(duration: 0.05)) {
+                        isEditingName = false
                         isEditingProfilePicture.toggle()
                     }
                 }
@@ -65,8 +68,58 @@ struct ProfileView: View {
                 
                 
                 ProfileEditButton(image: "square.and.pencil", title: "Edit Username") {
-                    print("Button: username")
+                    withAnimation(.easeInOut(duration: 0.05)) {
+                        isEditingProfilePicture = false
+                        
+                        isEditingName.toggle()
+                    }
                 }
+                
+                if isEditingName {
+                    TextField("name", text: $currentName)
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        .padding(.horizontal)
+                    HStack {
+                        Button {
+                            withAnimation {
+                                isEditingName = false
+                            }
+                        } label: {
+                            Text("Return")
+                                .padding()
+                                .frame(maxWidth: 200)
+                                .foregroundColor(.white)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(Color.accent.opacity(0.5))
+                                )
+                        }
+                        Button {
+                            
+                            if !currentName.isEmpty {
+                                profileName = currentName
+                                withAnimation {
+                                    isEditingName = false
+                                }
+                            }
+                            
+                        } label: {
+                            Text("Make changes")
+                                .padding()
+                                .frame(maxWidth: 200)
+                                .foregroundColor(.white)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(Color.colorBlue)
+                                )
+                        }
+                    }
+                    .padding()
+                    .transition(.scale)
+                }
+                
             }
             .background(
                 RoundedRectangle(cornerRadius: 10)
