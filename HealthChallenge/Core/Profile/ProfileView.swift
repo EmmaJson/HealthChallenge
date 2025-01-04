@@ -8,37 +8,20 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @AppStorage("profilePicture") var profilePicture: String?
-    @AppStorage("profileName") var profileName: String?
-    
-    @State private var isEditingName = true
-    @State private var currentName = ""
-    @State private var isEditingProfilePicture = false
-    @State private var selectedImage: String = "avatar 20"
-    
-    @State private var images = ["avatar 1", "avatar 2", "avatar 3", "avatar 4", "avatar 5", "avatar 6", "avatar 7", "avatar 8", "avatar 9", "avatar 10", "avatar 11", "avatar 12", "avatar 13", "avatar 14", "avatar 15", "avatar 16", "avatar 17", "avatar 18", "avatar 19", "avatar 20"
-    ]
-
     @StateObject private var viewModel = ProfileViewModel()
     @Binding var showSignInView: Bool
-    
-    let preferenceOptions: [String] = ["Running", "Hiking", "Swimming"]
-    private func preferenceIsSelected(text: String) -> Bool {
-        return viewModel.user?.preferences?.contains(text) == true
-    }
-    
+
     var body: some View {
         VStack {
             HStack {
-                Image(profilePicture ?? "avatar 20")
+                Image(viewModel.profileImage ?? "avatar 20")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 100, height: 100)
                     .padding(.all, 8)
                     .onTapGesture {
                         withAnimation(.easeInOut(duration: 0.05)) {
-                            isEditingName = false
-                            isEditingProfilePicture.toggle()
+                            viewModel.presentEditImage()
                         }
                     }
                 
@@ -47,7 +30,7 @@ struct ProfileView: View {
                         .font(.title)
                         .foregroundColor(.accent)
                     
-                    Text(profileName ?? "Anonymous")
+                    Text(viewModel.profileName ?? "Anonymous")
                         .font(.title2)
                 }
                 Spacer()
@@ -57,27 +40,68 @@ struct ProfileView: View {
                 
                 ProfileEditButton(image: "square.and.pencil", title: "Edit Profile Picture") {
                     withAnimation(.easeInOut(duration: 0.05)) {
-                        isEditingName = false
-                        isEditingProfilePicture.toggle()
+                        viewModel.presentEditImage()
+
                     }
                 }
                 
-                if isEditingProfilePicture {
-                    ProfilePictureEditor(selectedImage: $selectedImage, isEditing: $isEditingProfilePicture, images: images)
-                        .transition(.scale)
+                if viewModel.isEditingProfilePicture {
+                   
+                    VStack(spacing: 16) {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                ForEach(viewModel.images, id: \.self) { image in
+                                    Button {
+                                        withAnimation {
+                                            viewModel.selectNewImage(image: image)
+                                        }
+                                    } label: {
+                                        VStack {
+                                            Image(image)
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 80, height: 80)
+                                            if viewModel.selectedImage == image {
+                                                Circle()
+                                                    .frame(width: 10, height: 10)
+                                                    .foregroundColor(Color.accentColor)
+                                            }
+                                        }
+                                        .padding()
+                                    }
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+
+                        HStack {
+                            
+                            ProfileItemButton(title: "Cancel", color: Color.accent.opacity(0.5)) {
+                                withAnimation {
+                                    viewModel.dismissEdit()
+                                }
+                            }.foregroundColor(Color.white)
+                            
+                            
+                            ProfileItemButton(title: "Save changes", color: Color.colorBlue) {
+                                withAnimation {
+                                    viewModel.setNewImage()
+                                }
+                            }.foregroundColor(Color.white)
+                        }
+                    }
+                    .transition(.scale)
                 }
                 
                 
                 ProfileEditButton(image: "square.and.pencil", title: "Edit Username") {
                     withAnimation(.easeInOut(duration: 0.05)) {
-                        isEditingProfilePicture = false
-                        
-                        isEditingName.toggle()
+                        viewModel.presentEditName()
                     }
                 }
                 
-                if isEditingName {
-                    TextField("Name...", text: $currentName)
+                if viewModel.isEditingName {
+                    TextField("Name...", text: $viewModel.currentName)
                         .padding()
                         .foregroundColor(Color.gray)
                         .background()
@@ -86,16 +110,15 @@ struct ProfileView: View {
                     HStack {
                         ProfileItemButton(title: "Cancel", color: Color.accent.opacity(0.5)) {
                             withAnimation {
-                                isEditingName = false
+                                viewModel.dismissEdit()
                             }
                         }.foregroundColor(Color.white)
                         
                         
                         ProfileItemButton(title: "Save changes", color: Color.colorBlue) {
-                            if !currentName.isEmpty {
-                                profileName = currentName
+                            if !viewModel.currentName.isEmpty {
                                 withAnimation {
-                                    isEditingName = false
+                                    viewModel.setNewName()
                                 }
                             }
                         }.foregroundColor(Color.white)
@@ -129,9 +152,6 @@ struct ProfileView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .onAppear {
-            selectedImage = profilePicture ?? "avatar 20"
-        }
         .navigationBarTitle("Profile")
     }
 }
@@ -142,4 +162,3 @@ struct ProfileView: View {
         ProfileView(showSignInView: .constant(false))
     }
 }
-
