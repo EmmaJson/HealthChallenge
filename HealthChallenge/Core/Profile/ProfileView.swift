@@ -37,6 +37,7 @@ struct ProfileView: View {
                     .padding(.all, 8)
                     .onTapGesture {
                         withAnimation(.easeInOut(duration: 0.05)) {
+                            isEditingName = false
                             isEditingProfilePicture.toggle()
                         }
                     }
@@ -76,45 +77,28 @@ struct ProfileView: View {
                 }
                 
                 if isEditingName {
-                    TextField("name", text: $currentName)
+                    TextField("Name...", text: $currentName)
                         .padding()
-                        .background(Color.white)
+                        .foregroundColor(Color.gray)
+                        .background()
                         .cornerRadius(10)
                         .padding(.horizontal)
                     HStack {
-                        Button {
+                        ProfileItemButton(title: "Cancel", color: Color.accent.opacity(0.5)) {
                             withAnimation {
                                 isEditingName = false
                             }
-                        } label: {
-                            Text("Return")
-                                .padding()
-                                .frame(maxWidth: 200)
-                                .foregroundColor(.white)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(Color.accent.opacity(0.5))
-                                )
-                        }
-                        Button {
-                            
+                        }.foregroundColor(Color.white)
+                        
+                        
+                        ProfileItemButton(title: "Save changes", color: Color.colorBlue) {
                             if !currentName.isEmpty {
                                 profileName = currentName
                                 withAnimation {
                                     isEditingName = false
                                 }
                             }
-                            
-                        } label: {
-                            Text("Make changes")
-                                .padding()
-                                .frame(maxWidth: 200)
-                                .foregroundColor(.white)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(Color.colorBlue)
-                                )
-                        }
+                        }.foregroundColor(Color.white)
                     }
                     .padding()
                     .transition(.scale)
@@ -148,49 +132,6 @@ struct ProfileView: View {
         .onAppear {
             selectedImage = profilePicture ?? "avatar 20"
         }
-        
-        /*
-         List {
-         if let user = viewModel.user {
-         Text("Email: \(user.email ?? "Anonymous")")
-         Text("User ID: \(user.userId)")
-         
-         VStack {
-         HStack {
-         ForEach(preferenceOptions, id: \.self) { string in
-         Button(string) {
-         if preferenceIsSelected(text: string) {
-         viewModel.removeUserPreference(text: string)
-         } else {
-         viewModel.addUserPreference(text: string)
-         }
-         }
-         .font(.headline)
-         .buttonStyle(.borderedProminent)
-         .fixedSize()
-         .tint(preferenceIsSelected(text: string) ? .blue : .gray)
-         }
-         }
-         }
-         Text("User preferences: \((user.preferences ?? []).joined(separator: ", "))")
-         .frame(maxWidth: .infinity, alignment: .leading)
-         
-         Button {
-         if user.favouriteChallenge == nil {
-         viewModel.addFavouriteChallenge()
-         } else {
-         viewModel.removeFavouriteChallenge()
-         }
-         } label: {
-         Text("Favourite Challenge: \(user.favouriteChallenge?.title ?? "")")
-         }
-         }
-         }
-         
-         .task {
-         try? await viewModel.loadCurrentUser()
-         }
-         */
         .navigationBarTitle("Profile")
     }
 }

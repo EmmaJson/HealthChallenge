@@ -34,35 +34,20 @@ struct ProfilePictureEditor: View {
             }
 
             HStack {
-                Button {
+                
+                ProfileItemButton(title: "Cancel", color: Color.accent.opacity(0.5)) {
                     withAnimation {
                         isEditing = false
                     }
-                } label: {
-                    Text("Return")
-                        .padding()
-                        .frame(maxWidth: 200)
-                        .foregroundColor(.white)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.accent.opacity(0.5))
-                        )
-                }
-                Button {
+                }.foregroundColor(Color.white)
+                
+                
+                ProfileItemButton(title: "Save changes", color: Color.colorBlue) {
                     withAnimation {
                         profilePicture = selectedImage
                         isEditing = false
                     }
-                } label: {
-                    Text("Change Picture")
-                        .padding()
-                        .frame(maxWidth: 200)
-                        .foregroundColor(.white)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.colorBlue)
-                        )
-                }
+                }.foregroundColor(Color.white)
             }
         }
         .padding()
