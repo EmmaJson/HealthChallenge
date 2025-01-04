@@ -8,9 +8,6 @@
 import SwiftUI
 import Charts
 
-import SwiftUI
-import Charts
-
 struct HealthView: View {
     @StateObject private var viewModel = HealthKitViewModel()
     
@@ -22,118 +19,116 @@ struct HealthView: View {
                     .bold()
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                ZStack {
-                    if viewModel.isLoading {
-                        VStack {
-                            ShimmerView()
-                                .frame(width: 300, height: 30)
-                                .cornerRadius(10)
-                                .padding(.bottom, 10)
-
-                            ShimmerView()
-                                .frame(width: 300, height: 30)
-                                .cornerRadius(10)
-                                .padding(.bottom, 20)
-
-                            ShimmerView()
-                                .frame(height: 300)
-                                .cornerRadius(10)
-                                .padding(.bottom, 20)
-
-                            HStack {
-                                Spacer()
-                                VStack(spacing: 16) {
-                                    ShimmerView()
-                                        .frame(width: 110, height: 20)
-                                    ShimmerView()
-                                        .frame(width: 80, height: 30)
-                                }
-                                .frame(width: 110, height: 80)
-                                .padding()
-                                Spacer()
-                                VStack(spacing: 16) {
-                                    ShimmerView()
-                                        .frame(width: 110, height: 20)
-                                    ShimmerView()
-                                        .frame(width: 80, height: 30)
-                                }
-                                .frame(width: 110, height: 80)
-                                .padding()
-                                Spacer()
-                            }
-                        }
-                        .padding()
-                    } else {
-                        VStack {
-                            Picker("Metric", selection: $viewModel.selectedMetric) {
-                                ForEach(MetricType.allCases, id: \.self) { metric in
-                                    Text(metric.rawValue).tag(metric)
-                                }
-                            }
-                            .pickerStyle(SegmentedPickerStyle())
-                            .frame(maxWidth: .infinity)
-                            .padding(5)
-                            
-                            Picker("Time Period", selection: $viewModel.selectedTimePeriod) {
-                                ForEach(TimePeriod.allCases, id: \.self) { period in
-                                    Text(period.rawValue).tag(period)
-                                }
-                            }
-                            .pickerStyle(SegmentedPickerStyle())
-                            .frame(maxWidth: .infinity)
-                            .padding(5)
-                            
-                            VStack {
-                                if viewModel.data.isEmpty {
-                                    Text("No data available.")
-                                        .foregroundColor(.red)
-                                } else {
-                                    Chart {
-                                        ForEach(Array(zip(viewModel.labels, viewModel.data)), id: \.0) { label, value in
-                                            BarMark(
-                                                x: .value("Time", label),
-                                                y: .value(viewModel.selectedMetric.rawValue, value)
-                                            )
-                                        }
-                                    }
-                                    .frame(height: 300)
-                                    .padding()
-                                }
-                            }
-                            
-                            HStack {
-                                Spacer()
-                                VStack(spacing: 16) {
-                                    Text("Average")
-                                        .font(.title2)
-                                    Text("\(viewModel.average, specifier: "%.0f")")
-                                        .font(.title3)
-                                }
-                                .frame(width: 110)
-                                .padding()
-                                .background(.accent.opacity(0.1))
-                                .cornerRadius(10)
-                                Spacer()
-                                VStack(spacing: 16) {
-                                    Text("Total")
-                                        .font(.title2)
-                                    Text("\(viewModel.total, specifier: "%.0f")")
-                                        .font(.title3)
-                                }
-                                .frame(width: 110)
-                                .padding()
-                                .background(.accent.opacity(0.1))
-                                .cornerRadius(10)
-                                Spacer()
-                            }
-                        }
-                        .padding()
+                Picker("Metric", selection: $viewModel.selectedMetric) {
+                    ForEach(MetricType.allCases, id: \.self) { metric in
+                        Text(metric.rawValue).tag(metric)
                     }
                 }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(5)
+                
+                Picker("Time Period", selection: $viewModel.selectedTimePeriod) {
+                    ForEach(TimePeriod.allCases, id: \.self) { period in
+                        Text(period.rawValue).tag(period)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(5)
+                
+                Chart {
+                    ForEach(Array(zip(viewModel.labels, viewModel.data)), id: \.0) { label, value in
+                        BarMark(
+                            x: .value("Time", transformLabel(label: label)),
+                            y: .value(viewModel.selectedMetric.rawValue, value)
+                        )
+                    }
+                }
+                .padding()
+                
+                .chartXAxis {
+                    AxisMarks { value in
+                        AxisValueLabel {
+                            if(viewModel.selectedTimePeriod == .week || viewModel.selectedTimePeriod == .year) {
+                                Text(value.as(String.self) ?? "")
+                                    .padding(.top)
+                                    .font(.footnote)
+                                    .bold()
+                                    .minimumScaleFactor(0.5)
+                                    .frame(maxHeight: 0.5, alignment: .center)
+                            } else {
+                                Text(value.as(String.self) ?? "")
+                                    .padding(.top)
+                                    .font(.footnote)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.5)
+                                    .rotationEffect(.degrees(90)) // Rotate text if needed
+                                    .frame(maxHeight: 0.5, alignment: .center)
+                            }
+                        }
+                    }
+                }
+                .chartYAxis {
+                    AxisMarks { value in
+                        AxisValueLabel {
+                            Text("\(value.as(Double.self) ?? 0, specifier: "%.0f")")
+                                .font(.caption)
+                        }
+                    }
+                }
+                .frame(height: 300)
+                .padding()
+                
+                HStack {
+                    Spacer()
+                    StatisticCardView(title: "Average", value: viewModel.average)
+                    Spacer()
+                    StatisticCardView(title: "Total", value: viewModel.total)
+                    Spacer()
+                }
             }
+            .padding()
         }
         .refreshable {
             viewModel.fetchData()
         }
     }
+    
+    private func transformLabel(label: String) -> String {
+        switch viewModel.selectedTimePeriod {
+        case .day:
+            if label.count > 4 {
+                return String(label.prefix(2))
+            } else {
+                return String(label.prefix(1))
+            }
+        case .week:
+            return label
+        case .month:
+            return String(label.prefix(2))
+        case .year:
+            return String(label.prefix(3))
+        }
+    }
+}
+
+struct StatisticCardView: View {
+    let title: String
+    let value: Double
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            Text(title)
+                .font(.title2)
+            Text("\(value, specifier: "%.0f")")
+                .font(.title3)
+        }
+        .frame(width: 110)
+        .padding()
+        .background(.accent.opacity(0.1))
+        .cornerRadius(10)
+    }
+}
+
+#Preview {
+    HealthView()
 }

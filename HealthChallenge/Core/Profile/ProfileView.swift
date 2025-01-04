@@ -43,7 +43,7 @@ struct ProfileView: View {
                 
                 VStack(alignment: .leading) {
                     Text("Good Morning, ")
-                        .font(.largeTitle)
+                        .font(.title)
                         .foregroundColor(.accent)
                     
                     Text(profileName ?? "Anonymous")

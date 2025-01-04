@@ -41,7 +41,7 @@ struct HomeView: View {
                                 .font(.callout)
                                 .bold()
                                 .foregroundColor(.blue)
-                            Text("\(viewModel.distanceString) km")
+                            Text("\(viewModel.distanceString)")
                                 .bold()
                             
                         }
@@ -65,18 +65,6 @@ struct HomeView: View {
                         .font(.title2)
                     
                     Spacer()
-                    
-                    /*
-                    Button {
-                        print("show more")
-                    } label: {
-                        Text("Show more")
-                            .padding(.all, 10)
-                            .foregroundColor(.white)
-                            .background(.blue)
-                            .cornerRadius(20)
-                    }
-                    */
                 }
                 .padding(.horizontal)
                 
@@ -87,14 +75,7 @@ struct HomeView: View {
                         }
                     }
                     .padding(.horizontal)
-                } else {
-                    LazyVGrid(columns: Array(repeating: GridItem(spacing: 10), count: 2)) {
-                        ForEach(0..<6, id: \.self) { _ in
-                            ShimmerActivityCardView()
-                        }
-                    }
-                    .padding(.horizontal)
-                }
+                } 
             }
         }
         .refreshable {
