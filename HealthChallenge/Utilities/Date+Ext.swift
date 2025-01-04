@@ -8,9 +8,8 @@
 import Foundation
 
 extension Date {
-    static var startOfDay: Date {
-        let calendar = Calendar.current
-        return calendar.startOfDay(for: Date())
+    static func startOfDay(for date: Date = Date()) -> Date {
+        return Calendar.current.startOfDay(for: date)
     }
     
     static var startOfWeek: Date {

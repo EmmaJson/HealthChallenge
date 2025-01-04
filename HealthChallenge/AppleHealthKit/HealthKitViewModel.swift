@@ -47,18 +47,7 @@ final class HealthKitViewModel: ObservableObject {
     private var healthKitManager = HealthKitManager.shared
 
     init() {
-        requestAuthorization()
         fetchData()
-    }
-
-    private func requestAuthorization() {
-        healthKitManager.requestAuthorization { success, error in
-            if !success {
-                DispatchQueue.main.async {
-                    self.errorMessage = error?.localizedDescription ?? "Authorization failed."
-                }
-            }
-        }
     }
 
     func fetchData() {

@@ -9,15 +9,8 @@ import Foundation
 
 class LeaderboardViewModel: ObservableObject {
     
-    @Published var currentUser: DbUser = DbUser(
-        userId: "",
-        isAnonymous: false,
-        dateCreated: nil,
-        email: nil,
-        photoURL: nil,
-        preferences: nil,
-        favouriteChallenge: nil
-    )
+    @Published var currentUserId: String = ""
+    
     @Published var leaderResult = LeaderboardResult(user: nil, top10: [])
     var mockData = [
         LeaderboardUser(id: "1",  username: "Emma", count: 2342),
@@ -54,10 +47,7 @@ class LeaderboardViewModel: ObservableObject {
         DispatchQueue.main.async {
             self.leaderResult = result
         }
-        
-        
     }
-    
     
     private func fecthLeaderboard() async throws -> LeaderboardResult {
         let leaders = try await LeaderboardManager.sharded.fetchLeaderboards()
@@ -78,7 +68,7 @@ class LeaderboardViewModel: ObservableObject {
             throw URLError(.badURL)
         }
         let steps =  try await fetchCurrentWeekStepCount()
-        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: currentUser.userId, username: username, count: Int(steps)))
+        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: currentUserId, username: username, count: Int(steps)))
         try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "t8xV64HGDuNuWN9SMsb0TsXh5kk1", username: "Lova", count: Int(12323)))
         try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "YYKEJE5AMCND575bHLJN80L95yg1", username: "Julia", count: Int(9345)))
     }
@@ -93,11 +83,9 @@ class LeaderboardViewModel: ObservableObject {
     
     private func fetchLoggedInUserId() async {
         do {
-            let currentUserId = try AuthenticationManager.shared.getAuthenticatedUser().uid
-            let currentUser = try await UserManager.shared.getUser(userId: currentUserId)
-            
-            DispatchQueue.main.async {
-                self.currentUser = currentUser
+            let userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
+            await MainActor.run { // Ensure this runs on the main thread
+                self.currentUserId = userId
             }
         } catch {
             print("Error fetching logged-in user: \(error.localizedDescription)")
