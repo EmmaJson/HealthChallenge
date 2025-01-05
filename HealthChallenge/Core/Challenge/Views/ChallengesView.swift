@@ -89,6 +89,7 @@ struct ChallengesView: View {
         .onAppear {
             Task {
                 await viewModel.loadChallenges()
+                await viewModel.fetchActiveChallenges()
             }
         }
     }

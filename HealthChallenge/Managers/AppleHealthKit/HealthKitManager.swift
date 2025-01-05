@@ -302,3 +302,85 @@ extension HealthKitManager {
         fetchData(type: stepType, unit: HKUnit.count(), interval: interval, startDate: startDate, endDate: endDate, completion: completion)
     }
 }
+
+// MARK: Fetch for challenges
+extension HealthKitManager {
+    func fetchQuantity(
+        type: HKQuantityType,
+        unit: HKUnit,
+        options: HKStatisticsOptions = .cumulativeSum,
+        startDate: Date,
+        endDate: Date = Date(),
+        completion: @escaping (Result<Double, Error>) -> Void
+    ) {
+        Logger.info("Fetching data for type: \(type.identifier) from \(startDate) to \(endDate)")
+        
+        let predicate = HKQuery.predicateForSamples(
+            withStart: startDate,
+            end: endDate,
+            options: .strictStartDate
+        )
+        
+        let query = HKStatisticsQuery(
+            quantityType: type,
+            quantitySamplePredicate: predicate,
+            options: options
+        ) { _, results, error in
+            if let error = error {
+                Logger.error("Error fetching data for \(type.identifier): \(error.localizedDescription)")
+                completion(.failure(error))
+                return
+            }
+            
+            if let quantity = (options == .discreteAverage ? results?.averageQuantity() : results?.sumQuantity()) {
+                let value = quantity.doubleValue(for: unit)
+                Logger.success("Successfully fetched value \(value) for \(type.identifier)")
+                completion(.success(value))
+            } else {
+                Logger.error("No data available for type: \(type.identifier)")
+                completion(.failure(NSError(domain: "HealthKitManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "No data available for \(type.identifier)"])))
+            }
+        }
+        
+        healthStore.execute(query)
+    }
+}
+
+extension HealthKitManager {
+    func fetchChallengeData(
+        type: String,
+        startDate: Date,
+        endDate: Date = Date(),
+        completion: @escaping (Result<Double, Error>) -> Void
+    ) {
+        let (quantityType, unit): (HKQuantityType?, HKUnit)
+        switch type {
+        case "Steps":
+            quantityType = HKQuantityType.quantityType(forIdentifier: .stepCount)
+            unit = HKUnit.count()
+        case "Distance":
+            quantityType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)
+            unit = HKUnit.meterUnit(with: .kilo)
+        case "Calories":
+            quantityType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)
+            unit = HKUnit.kilocalorie()
+        default:
+            completion(.failure(NSError(domain: "HealthKitManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unsupported challenge type."])))
+            return
+        }
+        
+        guard let quantityType = quantityType else {
+            completion(.failure(NSError(domain: "HealthKitManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "HealthKit type unavailable."])))
+            return
+        }
+        
+        fetchQuantity(
+            type: quantityType,
+            unit: unit,
+            options: .cumulativeSum,
+            startDate: startDate,
+            endDate: endDate,
+            completion: completion
+        )
+    }
+}

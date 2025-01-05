@@ -12,7 +12,7 @@ import Foundation
 final class ChallengesViewModel {
     var challenges: [Challenge] = []
     var groupedChallenges: [String: [Challenge]] {
-        Dictionary(grouping: challenges, by: { $0.interval }) // Assuming `Challenge` has an `interval` property
+        Dictionary(grouping: challenges, by: { $0.interval })
     }
     var activeChallenges: [ActiveChallenge] = []
     var isLoading: Bool = false
@@ -35,6 +35,7 @@ final class ChallengesViewModel {
         } catch {
             errorMessage = "Failed to load challenges: \(error.localizedDescription)"
         }
+            
         isLoading = false
     }
     
@@ -61,7 +62,9 @@ final class ChallengesViewModel {
     func fetchActiveChallenges() async {
         do {
             let user = try await UserManager.shared.getUser(userId: currentUserId)
-            self.activeChallenges = user.activeChallenges ?? []
+            DispatchQueue.main.async {
+                self.activeChallenges = user.activeChallenges ?? []
+            }
         } catch {
             print("Failed to fetch active challenges: \(error.localizedDescription)")
         }

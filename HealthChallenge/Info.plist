@@ -15,11 +15,37 @@
 			</array>
 		</dict>
 	</array>
+	<key>FirebaseMessagingAutoInitEnabled</key>
+	<true/>
 	<key>GIDClientID</key>
 	<string>288915965458-ti3349lmqb3bkqr756u38942cuiige9t.apps.googleusercontent.com</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>mailto</string>
+	</array>
+	<key>NSAllowsArbitraryLoadsInWebContent</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSExceptionDomains</key>
+	<dict>
+		<key>firebaseio.com</key>
+		<dict>
+			<key>NSIncludesSubdomains</key>
+			<true/>
+			<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+			<false/>
+			<key>NSTemporaryExceptionMinimumTLSVersion</key>
+			<string>TLSv1.2</string>
+		</dict>
+	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
 	</array>
 </dict>
 </plist>

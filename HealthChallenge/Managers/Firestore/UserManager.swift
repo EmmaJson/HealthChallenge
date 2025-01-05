@@ -14,6 +14,7 @@ struct ActiveChallenge: Codable {
     let description: String
     let points: Int
     let type: String
+    let interval: String
     let startDate: Date
     let endDate: Date
 }
@@ -163,6 +164,7 @@ final class UserManager {
     private init() { }
     
     private let userCollection = Firestore.firestore().collection("users")
+    private var activeListeners: [ListenerRegistration] = []
     private func userDocument(userId: String) -> DocumentReference {
         userCollection.document(userId)
     }
@@ -276,9 +278,20 @@ extension UserManager {
 
 extension UserManager {
     func joinChallenge(userId: String, challenge: Challenge) async throws {
+        let user = try await getUser(userId: userId)
+        guard let activeChallenges = user.activeChallenges else { return }
+
+        // Check if a challenge of the same type and interval already exists
+        if activeChallenges.contains(where: { $0.type == challenge.type && $0.interval == challenge.interval }) {
+            DispatchQueue.main.async {
+                presentAlert(title: "Ooops", message: "You can't perticipate in two challenges of the same type and interval")
+            }
+            return
+        }
+
+        // Create and add the new challenge
         let startDate = Date()
         let endDate: Date
-        
         switch challenge.interval {
         case "Daily":
             endDate = Calendar.current.startOfDay(for: Calendar.current.date(byAdding: .hour, value: 24, to: startDate)!)
@@ -287,20 +300,20 @@ extension UserManager {
         case "Monthly":
             endDate = Calendar.current.date(byAdding: .day, value: 30, to: startDate) ?? startDate
         default:
-            print("Invalid challenge type: \(challenge.interval)") // Log the invalid type
-            throw NSError(domain: "Invalid challenge type", code: 1, userInfo: nil)
+            throw NSError(domain: "Invalid challenge interval \(challenge.interval)", code: 2, userInfo: nil)
         }
-        
+
         let activeChallenge = ActiveChallenge(
             challengeId: challenge.id,
             title: challenge.title,
             description: challenge.description,
             points: challenge.points,
             type: challenge.type,
+            interval: challenge.interval,
             startDate: startDate,
             endDate: endDate
         )
-        
+
         // Update Firestore
         let data: [String: Any] = [
             "active_challenges": FieldValue.arrayUnion([try Firestore.Encoder().encode(activeChallenge)])
@@ -346,9 +359,8 @@ extension UserManager {
 
         let updatedActiveChallenges = activeChallenges.filter { $0.challengeId != challengeId }
         var updatedPastChallenges = user.pastChallenges ?? []
-        updatedPastChallenges.append(PastChallenge(challenge: ActiveChallenge(challengeId: completedChallenge.challengeId, title: completedChallenge.title, description: completedChallenge.description, points: completedChallenge.points, type: completedChallenge.type, startDate: completedChallenge.startDate, endDate: Date()), isCompleted: true))
+        updatedPastChallenges.append(PastChallenge(challenge: ActiveChallenge(challengeId: completedChallenge.challengeId, title: completedChallenge.title, description: completedChallenge.description, points: completedChallenge.points, type: completedChallenge.type, interval: completedChallenge.interval, startDate: completedChallenge.startDate, endDate: Date()), isCompleted: true))
 
-        // Serialize and log data for debugging
         let encodedActiveChallenges = try updatedActiveChallenges.map { challenge in
             try Firestore.Encoder().encode(challenge)
         }
@@ -359,7 +371,6 @@ extension UserManager {
         }
         print("Encoded Past Challenges: \(encodedPastChallenges)")
 
-        // Update Firestore
         let data: [String: Any] = [
             "active_challenges": encodedActiveChallenges,
             "past_challenges": encodedPastChallenges,
@@ -389,6 +400,7 @@ extension UserManager {
     }
 }
 
+// MARK: Check the challenge
 extension UserManager {
     func checkAndCompleteChallenges(userId: String, steps: Int, distance: Int, caloriesBurned: Int) async throws {
         let user = try await getUser(userId: userId)
@@ -397,7 +409,6 @@ extension UserManager {
         for challenge in activeChallenges {
             var isComplete = false
 
-            // Check if health data meets challenge goals
             switch challenge.type {
             case "Steps":
                 isComplete = steps >= challenge.points * 1000 // 1 p = 1000 steps
@@ -415,6 +426,42 @@ extension UserManager {
         }
     }
     
+    func checkAndCompleteChallenges(userId: String) async throws {
+        let user = try await getUser(userId: userId)
+        guard let activeChallenges = user.activeChallenges else { return }
+
+        for challenge in activeChallenges {
+            // Fetch progress from HealthKitManager
+            try await withCheckedThrowingContinuation { continuation in
+                HealthKitManager.shared.fetchChallengeData(
+                    type: challenge.type,
+                    startDate: challenge.startDate,
+                    endDate: Date()
+                ) { result in
+                    switch result {
+                    case .success(let progress):
+                        // Check if the challenge is complete
+                        if progress >= Double(challenge.points) {
+                            Task {
+                                do {
+                                    try await self.completeChallenge(userId: userId, challengeId: challenge.challengeId)
+                                    self.sendCompletionNotification(for: challenge) // Notify user
+                                    continuation.resume() // Resume after notification
+                                } catch {
+                                    continuation.resume(throwing: error)
+                                }
+                            }
+                        } else {
+                            continuation.resume()
+                        }
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
+    }
+    
     func fetchPastChallenges(userId: String) async throws -> [PastChallenge] {
         let user = try await getUser(userId: userId)
         guard let pastChallenges = user.pastChallenges else {
@@ -422,5 +469,56 @@ extension UserManager {
         }
         return pastChallenges
     }
-    
+}
+
+// MARK: Notification of complete challenges
+extension UserManager {
+    private func sendCompletionNotification(for challenge: ActiveChallenge) {
+        let content = UNMutableNotificationContent()
+        content.title = "Challenge Completed!"
+        content.body = "You've completed the challenge: \(challenge.title)"
+        content.sound = .default
+
+        let request = UNNotificationRequest(
+            identifier: UUID().uuidString,
+            content: content,
+            trigger: nil
+        )
+
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+    }
+}
+
+// MARK: Background usage
+extension UserManager {
+    func resumeListeners(for userId: String) {
+        print("Ensuring Firestore listeners are active...")
+        
+        guard activeListeners.isEmpty else {
+            print("Listeners already active.")
+            return
+        }
+
+        let activeChallengesListener = userDocument(userId: userId)
+            .addSnapshotListener { snapshot, error in
+                if let error = error {
+                    print("Error resuming listener: \(error.localizedDescription)")
+                    return
+                }
+                
+                if let data = snapshot?.data(),
+                   let activeChallengesData = data["active_challenges"] as? [[String: Any]] {
+                    do {
+                        let activeChallenges = try activeChallengesData.map { dict in
+                            try Firestore.Decoder().decode(ActiveChallenge.self, from: dict)
+                        }
+                        print("Active challenges updated: \(activeChallenges)")
+                    } catch {
+                        print("Failed to decode active challenges: \(error)")
+                    }
+                }
+            }
+        
+        activeListeners.append(activeChallengesListener)
+    }
 }

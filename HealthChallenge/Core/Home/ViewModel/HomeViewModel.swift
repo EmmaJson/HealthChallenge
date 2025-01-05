@@ -317,16 +317,6 @@ extension HomeViewModel {
         }
     }
     
-    func refreshChallenges() async {
-        do {
-            let userId = AuthenticationManager.shared.getAuthenticatedUserId()
-            try await UserManager.shared.checkAndCompleteChallenges(userId: userId, steps: steps, distance: distance, caloriesBurned: calories)
-            await fetchActiveChallenges()
-        } catch {
-            print("Failed to refresh challenges: \(error.localizedDescription)")
-        }
-    }
-    
     func checkExpiredChallenges() async {
         do {
             let userId = AuthenticationManager.shared.getAuthenticatedUserId()
@@ -345,3 +335,55 @@ extension HomeViewModel {
     }
 }
 
+import HealthKit
+
+extension HomeViewModel {
+    
+    func completeChallenge(_ challengeId: String) async {
+        do {
+            let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+            try await UserManager.shared.completeChallenge(userId: userId, challengeId: challengeId)
+            print("Successfully completed challenge.")
+            await fetchActiveChallenges() // Refresh active challenges
+        } catch {
+            print("Failed to complete challenge: \(error.localizedDescription)")
+        }
+    }
+}
+
+extension HomeViewModel {
+    func refreshChallenges() async {
+        do {
+            let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+            
+            for challenge in activeChallenges {
+                HealthKitManager.shared.fetchChallengeData(
+                    type: challenge.type,
+                    startDate: challenge.startDate,
+                    endDate: Date()
+                ) { [weak self] result in
+                    switch result {
+                    case .success(let progress):
+                        self?.updateChallengeProgress(challenge: challenge, progress: progress)
+                    case .failure(let error):
+                        print("Failed to fetch \(challenge.type) data: \(error.localizedDescription)")
+                    }
+                }
+            }
+            
+            await fetchActiveChallenges()
+        } catch {
+            print("Failed to refresh challenges: \(error.localizedDescription)")
+        }
+    }
+    
+    private func updateChallengeProgress(challenge: ActiveChallenge, progress: Double) {
+        if progress >= Double(challenge.points) {
+            Task {
+                await completeChallenge(challenge.challengeId)
+            }
+        } else {
+            print("Challenge \(challenge.title) progress: \(progress)/\(challenge.points)")
+        }
+    }
+}
