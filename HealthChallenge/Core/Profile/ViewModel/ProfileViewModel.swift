@@ -9,16 +9,17 @@ import Foundation
 import SwiftUI
 
 @MainActor
-final class ProfileViewModel: ObservableObject {
-    @Published var showAlert = false
-    @Published var isEditingName = false
-    @Published var isEditingProfilePicture = false
+@Observable
+final class ProfileViewModel {
+    var showAlert = false
+    var isEditingName = false
+    var isEditingProfilePicture = false
     
-    @Published var currentName = ""
-    @Published var profileName = UserDefaults.standard.string(forKey: "profileName")
+    var currentName = ""
+    var profileName = UserDefaults.standard.string(forKey: "profileName")
 
-    @Published var selectedImage: String? = UserDefaults.standard.string(forKey: "profilePicture")
-    @Published var profileImage: String? = UserDefaults.standard.string(forKey: "profilePicture")
+    var selectedImage: String? = UserDefaults.standard.string(forKey: "profilePicture")
+    var profileImage: String? = UserDefaults.standard.string(forKey: "profilePicture")
     
     var images = ["avatar 1", "avatar 2", "avatar 3", "avatar 4", "avatar 5", "avatar 6", "avatar 7", "avatar 8", "avatar 9", "avatar 10", "avatar 11", "avatar 12", "avatar 13", "avatar 14", "avatar 15", "avatar 16", "avatar 17", "avatar 18", "avatar 19", "avatar 20"
     ]

@@ -8,14 +8,15 @@
 import Foundation
 import SwiftUI
 
-class HomeViewModel: ObservableObject {
+@Observable
+class HomeViewModel {
     let healthManager = HealthKitManager.shared
     
-    @Published var calories: Int = 0
-    @Published var steps: Int = 0
-    @Published var distance: Int = 0
-    @Published var distanceString: String = ""
-    @Published var activities = [ActivityCard]()
+    var calories: Int = 0
+    var steps: Int = 0
+    var distance: Int = 0
+    var distanceString: String = ""
+    var activities = [ActivityCard]()
     
     private let activityOrder = ["Calories", "Steps", "Distance", "Heart Rate", "Active", "Caloric Intake"]
     

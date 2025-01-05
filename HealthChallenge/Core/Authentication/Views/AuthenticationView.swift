@@ -10,7 +10,7 @@ import GoogleSignIn
 import GoogleSignInSwift
 
 struct AuthenticationView: View {
-    @StateObject private var viewModel = AuthenticationViewModel()
+    @State private var viewModel = AuthenticationViewModel()
     @Binding var showSignInView: Bool
     
     var body: some View {

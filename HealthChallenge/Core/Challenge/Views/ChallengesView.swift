@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ChallengesView: View {
-    @StateObject private var viewModel = ChallengesViewModel()
+    @State private var viewModel = ChallengesViewModel()
     
     var body: some View {
         

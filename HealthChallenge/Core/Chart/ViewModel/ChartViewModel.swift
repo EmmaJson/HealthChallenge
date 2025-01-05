@@ -27,22 +27,23 @@ enum MetricType: String, CaseIterable, Identifiable {
 }
 
 @MainActor
-final class ChartViewModel: ObservableObject {
-    @Published var labels: [String] = []
-    @Published var data: [Double] = []
-    @Published var average: Double = 0
-    @Published var total: Double = 0
-    @Published var errorMessage: String? = nil
+@Observable
+final class ChartViewModel {
+    var labels: [String] = []
+    var data: [Double] = []
+    var average: Double = 0
+    var total: Double = 0
+    var errorMessage: String? = nil
     
-    @Published var selectedTimePeriod: TimePeriod = .day {
+    var selectedTimePeriod: TimePeriod = .day {
         didSet { fetchData() }
     }
     
-    @Published var selectedMetric: MetricType = .steps {
+    var selectedMetric: MetricType = .steps {
         didSet { fetchData() }
     }
     
-    private var healthKitManager = HealthKitManager.shared
+    let healthKitManager = HealthKitManager.shared
 
     init() {
         fetchData()

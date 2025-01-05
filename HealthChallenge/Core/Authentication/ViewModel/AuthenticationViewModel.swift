@@ -9,15 +9,16 @@ import Foundation
 import SwiftUI
 
 @MainActor
-final class AuthenticationViewModel: ObservableObject {
+@Observable
+final class AuthenticationViewModel {
     
     private let profileVm = ProfileViewModel()
     
-    @Published var email: String = ""
-    @Published var password: String = ""
+    var email: String = ""
+    var password: String = ""
 
-    @Published var authProviders: [AuthProviderOptions] = []
-    @Published var authUser: AuthDataResultModel? = nil
+    var authProviders: [AuthProviderOptions] = []
+    var authUser: AuthDataResultModel? = nil
 
     func loadAuthProviders() {
         if let providers = try? AuthenticationManager.shared.getProviders() {

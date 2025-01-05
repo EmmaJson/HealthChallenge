@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LinkEmailView: View {
-    @StateObject private var viewModel = AuthenticationViewModel()
+    @State private var viewModel = AuthenticationViewModel()
     @State private var pressedButton = false
     @State private var errorMessage: String?
     

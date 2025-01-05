@@ -9,10 +9,11 @@ import Foundation
 import FirebaseAuth
 
 @MainActor
-final class ChallengesViewModel: ObservableObject {
-    @Published var challenges: [Challenge] = []
-    @Published var isLoading: Bool = false
-    @Published var errorMessage: String? = nil
+@Observable
+final class ChallengesViewModel {
+    var challenges: [Challenge] = []
+    var isLoading: Bool = false
+    var errorMessage: String? = nil
 
     private var currentUserId: String? {
         Auth.auth().currentUser?.uid

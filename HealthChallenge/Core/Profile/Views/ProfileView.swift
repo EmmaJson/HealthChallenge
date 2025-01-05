@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @StateObject private var viewModel = ProfileViewModel()
+    @State private var viewModel = ProfileViewModel()
     @Binding var showSignInView: Bool
 
     var body: some View {
@@ -168,11 +168,10 @@ struct ProfileView: View {
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .alert("Ooops", isPresented: $viewModel.showAlert, actions: {
-            Button {
+            Button(role: .cancel) {
                 viewModel.showAlert = false
             } label: {
                 Text("Ok")
-                    .foregroundColor(.blue)
             }
         }, message: {
             Text("We were unable to open your mail application")

@@ -9,7 +9,6 @@ import SwiftUI
 
 struct HomeTabView: View {
     @AppStorage("username") var username: String?
-    @StateObject var viewModel = LeaderboardViewModel()
     @State var selectedTab = "Home"
     @Binding var showSignInView: Bool
     @State var showTermsView = true
@@ -44,6 +43,7 @@ struct HomeTabView: View {
                     Text("Leaderboard")
                 }
         }
+        .tint(.accent)
         .onAppear {
             showTermsView = username == nil
         }

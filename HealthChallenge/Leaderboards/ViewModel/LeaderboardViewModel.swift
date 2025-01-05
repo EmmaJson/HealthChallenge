@@ -7,12 +7,13 @@
 
 import Foundation
 
-class LeaderboardViewModel: ObservableObject {
+@Observable
+class LeaderboardViewModel {
     
-    @Published var currentUserId: String = ""
-    @Published var showAlert = false
+    var currentUserId: String = ""
+    var showAlert = false
     
-    @Published var leaderResult = LeaderboardResult(user: nil, top10: [])
+    var leaderResult = LeaderboardResult(user: nil, top10: [])
     var mockData = [
         LeaderboardUser(id: "1",  username: "Emma", count: 2342),
         LeaderboardUser(id: "2",  username: "Lova", count: 2342),

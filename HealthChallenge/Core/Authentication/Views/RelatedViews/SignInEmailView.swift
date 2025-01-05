@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SignInEmailView: View {
     
-    @StateObject private var viewModel = AuthenticationViewModel()
+    @State private var viewModel = AuthenticationViewModel()
     @Binding var showSignInView: Bool
     
     @State private var pressedButton = false
