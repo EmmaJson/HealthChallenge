@@ -9,8 +9,6 @@ import Foundation
 
 @Observable
 class LeaderboardViewModel {
-    
-    var currentUserId: String = ""
     var showAlert = false
     
     var leaderResult = LeaderboardResult(user: nil, top10: [])
@@ -39,7 +37,6 @@ class LeaderboardViewModel {
     func updateLeaderboard() {
         Task {
             do {
-                await fetchLoggedInUserId()
                 try await postStepCountUpdateForUser()
                 let result = try await fecthLeaderboard()
                 DispatchQueue.main.async { [weak self] in
@@ -74,11 +71,12 @@ class LeaderboardViewModel {
     }
     
     private func postStepCountUpdateForUser() async throws {
+        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
         guard let username = UserDefaults.standard.string(forKey: "username") else {
             throw LeaderBoardViewModelError.unableToFetchUsername
         }
         let steps =  try await fetchCurrentWeekStepCount()
-        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: currentUserId, username: username, count: Int(steps)))
+        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: userId, username: username, count: Int(steps)))
         //try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "t8xV64HGDuNuWN9SMsb0TsXh5kk1", username: "Lova", count: Int(12323)))
         //try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "YYKEJE5AMCND575bHLJN80L95yg1", username: "Julia", count: Int(9345)))
     }
@@ -89,16 +87,5 @@ class LeaderboardViewModel {
                 continuation.resume(with: result)
             }
         })
-    }
-    
-    private func fetchLoggedInUserId() async {
-        do {
-            let userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
-            await MainActor.run { // Ensure this runs on the main thread
-                self.currentUserId = userId
-            }
-        } catch {
-            LeaderBoardViewModelError.unableTooFetchLoggedInUserId
-        }
     }
 }

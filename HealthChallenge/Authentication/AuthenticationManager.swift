@@ -26,6 +26,11 @@ final class AuthenticationManager {
         return AuthDataResultModel(user: user)
     }
     
+    func getAuthenticatedUserId() -> String {
+        guard let userId = Auth.auth().currentUser?.uid else { return " "}
+        return userId
+    }
+    
     func getProviders() throws -> [AuthProviderOptions] {
         guard let providerData = Auth.auth().currentUser?.providerData else {
             throw URLError(.badServerResponse)

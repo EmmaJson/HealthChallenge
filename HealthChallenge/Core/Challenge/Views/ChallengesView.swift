@@ -25,7 +25,7 @@ struct ChallengesView: View {
                 List(viewModel.challenges) { challenge in
                     HStack(alignment: .center, spacing: 10) {
                         // Checkmark Icon
-                        if challenge.isDaily {
+                        if challenge.type == "Daily" {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.green)
                                 .font(.title3)
@@ -70,7 +70,9 @@ struct ChallengesView: View {
         }
         .navigationTitle("Challenges")
         .task {
-            await viewModel.loadChallenges(for: "all")
+            await viewModel.loadChallenges(type: "Daily")
+            await viewModel.loadChallenges(type: "Weekly")
+            await viewModel.loadChallenges(type: "Monthly")
         }
     }
     

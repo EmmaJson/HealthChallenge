@@ -48,5 +48,5 @@ struct ChallengeCardView: View {
 }
 
 #Preview {
-    ChallengeCardView(challenge: ChallengeCard(challenge: Challenge(id: "0", title: "Challenge Title", description: "Challenge Description", points: 100, isDaily: true, isWeekly: false, isMonthly: false, createdDate: Date()), image: "figure.run", tintColor: .green))
+    ChallengeCardView(challenge: ChallengeCard(challenge: Challenge(id: "0", title: "Challenge Title", description: "Challenge Description", points: 100, type: "Distance", interval: "Daily"), image: "figure.run", tintColor: .green))
 }

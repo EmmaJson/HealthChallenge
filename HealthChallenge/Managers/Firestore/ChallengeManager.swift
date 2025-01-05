@@ -13,10 +13,9 @@ struct Challenge: Codable, Identifiable {
     let title: String
     let description: String
     let points: Int
-    let isDaily: Bool
-    let isWeekly: Bool
-    let isMonthly: Bool
-    let createdDate: Date
+    let type: String
+    let interval: String
+    let createdDate = Date()
 }
 
 final class ChallengeManager {
@@ -64,7 +63,7 @@ final class ChallengeManager {
     // MARK: - Listen for new Challenges
     func listenForNewChallenges() {
         Firestore.firestore().collection("challenges")
-            .whereField("isDaily", isEqualTo: true)
+            .whereField("interval", isEqualTo: "d")
             .addSnapshotListener { snapshot, error in
                 if let error = error {
                     print("Error listening for challenges: \(error)")
@@ -85,27 +84,24 @@ final class ChallengeManager {
             title: String,
             description: String,
             points: Int,
-            isDaily: Bool = false,
-            isWeekly: Bool = false,
-            isMonthly: Bool = false
+            type: String,
+            interval: String
         ) async throws {
             let newChallenge = Challenge(
                 id: UUID().uuidString,
                 title: title,
                 description: description,
                 points: points,
-                isDaily: isDaily,
-                isWeekly: isWeekly,
-                isMonthly: isMonthly,
-                createdDate: Date()
+                type: type,
+                interval: interval
             )
             try challengeCollection.document(newChallenge.id).setData(from: newChallenge)
     }
     
-    // MARK: - Fetch Daily Challenges
-    func getDailyChallenges() async throws -> [Challenge] {
+    // MARK: - Fetch Challenges
+    func getChallenges(interval: String) async throws -> [Challenge] {
         let querySnapshot = try await challengeCollection
-            .whereField("isDaily", isEqualTo: true)
+            .whereField("interval", isEqualTo: interval)
             .getDocuments()
         
         return try querySnapshot.documents.compactMap { doc in
@@ -123,7 +119,9 @@ final class ChallengeManager {
                 "id": challenge.id,
                 "title": challenge.title,
                 "description": challenge.description,
-                "points": challenge.points
+                "points": challenge.points,
+                "type": challenge.type,
+                "interval": challenge.interval,
             ]
         ]
         try await userRef.updateData(data)
@@ -156,30 +154,24 @@ extension ChallengeManager {
                 title: "Walk 10,000 Steps",
                 description: "Take 10,000 steps today!",
                 points: 50,
-                isDaily: true,
-                isWeekly: false,
-                isMonthly: false,
-                createdDate: Date()
+                type: "Calories",
+                interval:"Daily"
             ),
             Challenge(
                 id: UUID().uuidString,
                 title: "Meditate for 10 Minutes",
                 description: "Relax your mind and meditate for 10 minutes.",
                 points: 30,
-                isDaily: false,
-                isWeekly: true,
-                isMonthly: false,
-                createdDate: Date()
+                type: "Steps",
+                interval:"Weekly"
             ),
             Challenge(
                 id: UUID().uuidString,
                 title: "Read a Book",
                 description: "Finish one book this month.",
                 points: 100,
-                isDaily: false,
-                isWeekly: false,
-                isMonthly: true,
-                createdDate: Date()
+                type: "Distance",
+                interval:"Monthly"
             )
         ]
 

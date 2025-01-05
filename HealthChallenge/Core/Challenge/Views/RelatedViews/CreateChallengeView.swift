@@ -11,13 +11,12 @@ struct CreateChallengeView: View {
     @State private var title = ""
     @State private var description = ""
     @State private var challengeType = "Distance" // Default challenge type
-    @State private var isDaily = false
-    @State private var isWeekly = false
-    @State private var isMonthly = false
+    @State private var interval = "Daily"
     @State private var errorMessage: String? = nil
     @State private var distanceOrStepsValue = 1 // Default value (e.g., 1 km or 1000 steps)
 
     let challengeTypes = ["Distance", "Steps", "Calories"]
+    let intervals = ["Daily", "Weekly", "Monthly"]
 
     var body: some View {
         VStack(spacing: 20) {
@@ -41,11 +40,13 @@ struct CreateChallengeView: View {
             } else if challengeType == "Calories" {
                 Stepper("\(distanceOrStepsValue)00 Kcal", value: $distanceOrStepsValue, in: 1...100)
             }
-
-            // Challenge Frequency
-            Toggle("Daily Challenge", isOn: $isDaily)
-            Toggle("Weekly Challenge", isOn: $isWeekly)
-            Toggle("Monthly Challenge", isOn: $isMonthly)
+            
+            Picker("Challenge Type", selection: $interval) {
+                ForEach(intervals, id: \.self) { type in
+                    Text(type)
+                }
+            }
+            .pickerStyle(SegmentedPickerStyle())
 
             if let errorMessage = errorMessage {
                 Text(errorMessage)
@@ -88,9 +89,8 @@ struct CreateChallengeView: View {
                 title: title,
                 description: description,
                 points: points,
-                isDaily: isDaily,
-                isWeekly: isWeekly,
-                isMonthly: isMonthly
+                type: challengeType,
+                interval: interval
             )
             errorMessage = nil
         } catch {

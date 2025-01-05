@@ -18,18 +18,26 @@ class HomeViewModel {
     var distanceString: String = ""
     var activities = [ActivityCard]()
     
-    private let activityOrder = ["Calories", "Steps", "Distance", "Heart Rate", "Active", "Caloric Intake"]
+    var currentCalorieGoal: Double = 0
+    var currentStepGoal: Double = 0
+    var currentDistanceGoal: Double = 0
     
-    var mockChallenges = [
-        ChallengeCard(challenge: Challenge(id: "0", title: "Challenge Title", description: "Challenge Description", points: 100, isDaily: true, isWeekly: false, isMonthly: false, createdDate: Date()), image: "figure.run", tintColor: .green),
-        ChallengeCard(challenge: Challenge(id: "1", title: "Challenge Title", description: "Challenge Description", points: 100, isDaily: true, isWeekly: false, isMonthly: false, createdDate: Date()), image: "figure.run", tintColor: .purple),
-        ChallengeCard(challenge: Challenge(id: "3", title: "Challenge Title", description: "Challenge Description", points: 100, isDaily: true, isWeekly: false, isMonthly: false, createdDate: Date()), image: "figure.run", tintColor: .yellow),
-        ChallengeCard(challenge: Challenge(id: "4", title: "Challenge Title", description: "Challenge Description", points: 100, isDaily: true, isWeekly: false, isMonthly: false, createdDate: Date()), image: "figure.run", tintColor: .blue),
-    ]
+    var calorieGoal: Double = 0
+    var stepGoal: Double = 0
+    var distanceGoal: Double = 0
+    
+    var showEditGoal: Bool = false
+    
+    private let activityOrder = ["Calories", "Steps", "Distance", "Heart Rate", "Active", "Caloric Intake"]
     
     init() {
         Logger.info("Initializing HomeViewModel")
-        authorizeAndFetchData()
+        DispatchQueue.main.async {
+            self.authorizeAndFetchData()
+        }
+        Task {
+            await self.fetchGoals()
+        }
     }
     
     /// Authorizes HealthKit and fetches data if successful
@@ -181,6 +189,62 @@ class HomeViewModel {
                 return false
             }
             return lhsIndex < rhsIndex
+        }
+    }
+    
+    func toggleEditor() {
+        self.showEditGoal.toggle()
+    }
+    
+    func setCurrentGoals() {
+        DispatchQueue.main.async {
+            self.calorieGoal = self.currentCalorieGoal
+            self.stepGoal = self.currentStepGoal
+            self.distanceGoal = self.currentDistanceGoal
+        }
+
+        Task {
+            try await Task.sleep(nanoseconds: 200_000_000) // 200 milliseconds
+            print("Saving updated goals: Calorie=\(self.calorieGoal), Steps=\(self.stepGoal), Distance=\(self.distanceGoal)")
+            await self.saveGoals()
+        }
+    }
+    
+    func isGoalsSet() -> Bool {
+        return self.calorieGoal != 0 || self.stepGoal != 0 || self.distanceGoal != 0
+    }
+    
+}
+
+extension HomeViewModel {
+    private func saveGoals() async {
+        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+        do {
+            try await UserManager.shared.updateUserGoals(
+                userId: userId,
+                calorieGoal: round(calorieGoal),
+                stepGoal: round(stepGoal),
+                distanceGoal: round(distanceGoal)
+            )
+        } catch {
+            print("Failed to save goals: \(error.localizedDescription)")
+        }
+    }
+
+
+    private func fetchGoals() async {
+        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+        do {
+            if let goals = try await UserManager.shared.getUserGoals(userId: userId) {
+                self.calorieGoal = goals.calorieGoal
+                self.currentCalorieGoal = goals.calorieGoal
+                self.stepGoal = goals.stepGoal
+                self.currentStepGoal = goals.stepGoal
+                self.distanceGoal = goals.distanceGoal
+                self.currentDistanceGoal = goals.distanceGoal
+            }
+        } catch {
+            print("Failed to fetch goals: \(error.localizedDescription)")
         }
     }
 }

@@ -48,17 +48,72 @@ struct HomeView: View {
                     }
                     Spacer()
                     
-                    ZStack {
-                        ProgressCircleView(progress: $viewModel.calories, goal: 600, color: .red)
-                        ProgressCircleView(progress: $viewModel.steps, goal: 10000, color: .green)
-                            .padding(.all, 20)
-                        ProgressCircleView(progress: $viewModel.distance, goal: 10, color: .blue)
-                            .padding(.all, 40)
+                    Button {
+                        withAnimation {
+                            viewModel.toggleEditor()
+                        }
+                    } label: {
+                        ZStack {
+                            if !viewModel.isGoalsSet() {
+                                Text("[ Tap to set goals ]")
+                                    .font(.title)
+                                    .bold()
+                                ProgressCircleView(progress: $viewModel.calories, goal: 1000, color: .red)
+                                ProgressCircleView(progress: $viewModel.steps, goal: 1000000, color: .green)
+                                    .padding(.all, 20)
+                                ProgressCircleView(progress: $viewModel.distance, goal: 10000, color: .blue)
+                                    .padding(.all, 40)
+                            } else {
+                                ProgressCircleView(progress: $viewModel.calories, goal: Int(viewModel.calorieGoal), color: .red)
+                                ProgressCircleView(progress: $viewModel.steps, goal: Int(viewModel.stepGoal), color: .green)
+                                    .padding(.all, 20)
+                                ProgressCircleView(progress: $viewModel.distance, goal: Int(viewModel.distanceGoal), color: .blue)
+                                    .padding(.all, 40)
+                            }
+                        }
+                        .padding(.leading)
+                        Spacer()
                     }
-                    .padding(.horizontal)
-                    Spacer()
                 }
-                .padding()
+                .padding(.horizontal)
+                
+                if viewModel.showEditGoal {
+                    
+                    VStack {
+                        Text("Edit your goals")
+                            .font(.title2)
+                            .bold()
+                            .padding(.top)
+                        
+                        VStack {
+                            SliderView(title: "Calories Goal: ", unit: "kcal" , sliderValue: $viewModel.currentCalorieGoal, start: 100, stop: 2000, color: .red)
+                            
+                            SliderView(title: "Step Goal: ", unit: "" , sliderValue: $viewModel.currentStepGoal, start: 1000, stop: 20000, color: .green)
+                            
+                            SliderView(title: "Distance Goal: ", unit: "km" , sliderValue: $viewModel.currentDistanceGoal, start: 1, stop: 20, color: .blue)
+                        }
+                        .padding()
+                        
+                        HStack {
+                            ProfileItemButton(title: "Cancel", color: Color.accent.opacity(0.5)) {
+                                withAnimation {
+                                    viewModel.toggleEditor()
+                                }
+                            }
+                            ProfileItemButton(title: "Save changes", color: Color.colorBlue) {
+                                withAnimation {
+                                    viewModel.setCurrentGoals()
+                                    viewModel.toggleEditor()
+                                }
+                            }
+                        }
+                        .padding()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color(uiColor: .systemGray6)
+                        .cornerRadius(15))
+                    .padding()
+                }
                 
                 HStack {
                     Text("Activity")

@@ -16,10 +16,10 @@ final class ProfileViewModel {
     var isEditingProfilePicture = false
     
     var currentName = ""
-    var profileName = UserDefaults.standard.string(forKey: "profileName")
+    var profileName = UserDefaults.standard.string(forKey: "username") ?? "Set a Name"
 
-    var selectedImage: String? = UserDefaults.standard.string(forKey: "profilePicture")
-    var profileImage: String? = UserDefaults.standard.string(forKey: "profilePicture")
+    var selectedImage: String = UserDefaults.standard.string(forKey: "avatar") ?? ""
+    var profileImage: String = UserDefaults.standard.string(forKey: "avatar") ?? "avatar 20"
     
     var images = ["avatar 1", "avatar 2", "avatar 3", "avatar 4", "avatar 5", "avatar 6", "avatar 7", "avatar 8", "avatar 9", "avatar 10", "avatar 11", "avatar 12", "avatar 13", "avatar 14", "avatar 15", "avatar 16", "avatar 17", "avatar 18", "avatar 19", "avatar 20"
     ]
@@ -41,7 +41,13 @@ final class ProfileViewModel {
     
     func setNewName() {
         profileName = currentName
-        UserDefaults.standard.set(currentName, forKey: "profileName")
+        UserDefaults.standard.set(currentName, forKey: "username")
+        
+        Task {
+            try await Task.sleep(nanoseconds: 200_000_000)
+            await self.saveProfile()
+        }
+        
         self.dismissEdit()
     }
     
@@ -51,7 +57,13 @@ final class ProfileViewModel {
     
     func setNewImage() {
         profileImage = selectedImage
-        UserDefaults.standard.set(selectedImage, forKey: "profilePicture")
+        UserDefaults.standard.set(selectedImage, forKey: "avatar")
+        
+        Task {
+            try await Task.sleep(nanoseconds: 200_000_000)
+            await self.saveProfile()
+        }
+        
         self.dismissEdit()
     }
     
@@ -77,5 +89,23 @@ final class ProfileViewModel {
             }
         }
         
+    }
+}
+
+extension ProfileViewModel {
+    private func saveProfile() async {
+        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+        print("Saving profile\(profileName), avatar=\(profileImage)")
+        do {
+            try await UserManager.shared.updateUserProfile(
+                userId: userId,
+                username: profileName,
+                avatar: profileImage
+                
+            )
+            print("Goals saved profile!")
+        } catch {
+            print("Failed to save profile: \(error.localizedDescription)")
+        }
     }
 }

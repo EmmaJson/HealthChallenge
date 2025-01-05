@@ -2,13 +2,14 @@
 //  TabView.swift
 //  HealthChallenge
 //
-//  Created by Lova Thorén on 2024-12-31.
+//  Created by Emma Johansson on 2024-12-31.
 //
 
 import SwiftUI
 
 struct HomeTabView: View {
     @AppStorage("username") var username: String?
+    @AppStorage("avatar") var avatar: String?
     @State var selectedTab = "Home"
     @Binding var showSignInView: Bool
     @State var showTermsView = true
@@ -47,9 +48,28 @@ struct HomeTabView: View {
         .onAppear {
             showTermsView = username == nil
         }
+        .task {
+            await fetchProfile()
+        }
     }
 }
 
 #Preview {
     HomeTabView(showSignInView: .constant(false))
+}
+
+extension HomeTabView {
+    func fetchProfile() async {
+        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+        do {
+            if let profile = try await UserManager.shared.getUserProfile(userId: userId) {
+                DispatchQueue.main.async {
+                    username = profile.username
+                    avatar = profile.avatar
+                }
+            }
+        } catch {
+            print("Failed to fetch profile: \(error.localizedDescription)")
+        }
+    }
 }

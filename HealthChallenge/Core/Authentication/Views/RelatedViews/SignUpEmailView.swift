@@ -2,7 +2,7 @@
 //  SignUpView.swift
 //  HealthChallenge
 //
-//  Created by Lova Thorén on 2024-12-26.
+//  Created by Emma Johansson on 2024-12-26.
 //
 
 import SwiftUI

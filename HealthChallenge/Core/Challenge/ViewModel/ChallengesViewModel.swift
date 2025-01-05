@@ -14,27 +14,24 @@ final class ChallengesViewModel {
     var challenges: [Challenge] = []
     var isLoading: Bool = false
     var errorMessage: String? = nil
+    
+    let challengeManager = ChallengeManager.shared
 
     private var currentUserId: String? {
         Auth.auth().currentUser?.uid
     }
+    
+    init() {
+        Task {
+            await self.loadChallenges(type: "Daily")
+        }
+    }
 
-    func loadChallenges(for type: String) async {
+    func loadChallenges(type: String) async {
         isLoading = true
         errorMessage = nil
         do {
-            challenges = try await ChallengeManager.shared.getDailyChallenges().filter { challenge in
-                switch type {
-                case "Daily":
-                    return challenge.isDaily
-                case "Weekly":
-                    return challenge.isWeekly
-                case "Monthly":
-                    return challenge.isMonthly
-                default:
-                    return challenge.isDaily || challenge.isWeekly || challenge.isMonthly
-                }
-            }
+            challenges = try await ChallengeManager.shared.getChallenges(interval: "Daily")
         } catch {
             errorMessage = "Failed to load challenges: \(error.localizedDescription)"
         }

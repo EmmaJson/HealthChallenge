@@ -2,7 +2,7 @@
 //  ProfileItemButton.swift
 //  HealthChallenge
 //
-//  Created by Lova Thorén on 2025-01-04.
+//  Created by Emma Johansson on 2025-01-04.
 //
 
 import SwiftUI
