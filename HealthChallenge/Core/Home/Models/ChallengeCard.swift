@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ChallengeCard {
-    let challenge: Challenge
+    let challenge: ActiveChallenge
     let image: String
     let tintColor: Color
 }

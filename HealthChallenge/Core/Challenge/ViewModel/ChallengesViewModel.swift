@@ -25,7 +25,7 @@ final class ChallengesViewModel {
     init() {
         Task {
             await self.loadChallenges(type: "Daily")
-            await loadActiveChallenges()
+            await fetchActiveChallenges()
         }
     }
 
@@ -39,21 +39,9 @@ final class ChallengesViewModel {
         }
         isLoading = false
     }
-
-    func signUp(for challenge: Challenge) async {
-        guard let userId = currentUserId else {
-            errorMessage = "No user logged in."
-            return
-        }
-        do {
-            try await ChallengeManager.shared.completeChallenge(userId: userId, challengeId: challenge.id)
-        } catch {
-            errorMessage = "Failed to sign up for challenge: \(error.localizedDescription)"
-        }
-    }
     
     func joinChallenge(_ challenge: Challenge) async {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
+        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
         do {
             try await UserManager.shared.joinChallenge(userId: userId, challenge: challenge)
             print("Successfully joined challenge: \(challenge.title)")
@@ -64,7 +52,7 @@ final class ChallengesViewModel {
     }
     
     func unjoinChallenge(_ challenge: Challenge) async {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
+        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
         do {
             try await UserManager.shared.unjoinChallenge(userId: userId, challengeId: challenge.id)
             print("Successfully unjoined challenge: \(challenge.title)")
@@ -75,7 +63,7 @@ final class ChallengesViewModel {
     }
     
     func fetchActiveChallenges() async {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
+        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
         do {
             let user = try await UserManager.shared.getUser(userId: userId)
             self.activeChallenges = user.activeChallenges ?? []
@@ -84,21 +72,8 @@ final class ChallengesViewModel {
         }
     }
     
-    func loadActiveChallenges() async {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
-        do {
-            let user = try await UserManager.shared.getUser(userId: userId)
-            DispatchQueue.main.async {
-                self.activeChallenges = user.activeChallenges ?? []
-            }
-        } catch {
-            print("Failed to load active challenges: \(error.localizedDescription)")
-        }
-    }
-    
     func isChallengeActive(_ challengeId: String) -> Bool {
         return activeChallenges.contains { $0.challengeId == challengeId }
     }
-    
     
 }

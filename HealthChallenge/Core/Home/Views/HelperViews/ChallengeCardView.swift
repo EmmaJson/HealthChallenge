@@ -38,15 +38,11 @@ struct ChallengeCardView: View {
 
                     Spacer()
                     
-                    Text(challenge.challenge.createdDate, format: .dateTime.day().month())
+                    Text(challenge.challenge.startDate, format: .dateTime.day().month())
                         .font(.subheadline)
                 }
             }
         }
         .padding(.horizontal)
     }
-}
-
-#Preview {
-    ChallengeCardView(challenge: ChallengeCard(challenge: Challenge(id: "0", title: "Challenge Title", description: "Challenge Description", points: 100, type: "Distance", interval: "Daily"), image: "figure.run", tintColor: .green))
 }

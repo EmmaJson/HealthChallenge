@@ -17,7 +17,9 @@ class HomeViewModel {
     var distance: Int = 0
     var distanceString: String = ""
     var activities = [ActivityCard]()
-    
+    private var activeChallenges = [ActiveChallenge]()
+    var challenges = [ChallengeCard]()
+
     var currentCalorieGoal: Double = 0
     var currentStepGoal: Double = 0
     var currentDistanceGoal: Double = 0
@@ -37,6 +39,7 @@ class HomeViewModel {
         }
         Task {
             await self.fetchGoals()
+            await fetchActiveChallenges()
         }
     }
     
@@ -72,6 +75,9 @@ class HomeViewModel {
         fetchTodayCalorieIntake()
         fetchTodayHeartRate()
         fetchTodayActive()
+        Task {
+            await fetchActiveChallenges()
+        }
     }
     
     func fetchTodayCalories() {
@@ -245,6 +251,39 @@ extension HomeViewModel {
             }
         } catch {
             print("Failed to fetch goals: \(error.localizedDescription)")
+        }
+    }
+}
+
+extension HomeViewModel {
+    func fetchActiveChallenges() async {
+        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+        do {
+            let user = try await UserManager.shared.getUser(userId: userId)
+            self.activeChallenges = user.activeChallenges ?? []
+            addChallengeCards()
+        } catch {
+            print("Failed to fetch active challenges: \(error.localizedDescription)")
+        }
+    }
+    
+    func addChallengeCards() {
+        challenges.removeAll()
+        
+        for challenge in activeChallenges {
+            let (image, tintColor): (String, Color)
+            switch challenge.type {
+            case "Distance":
+                (image, tintColor) = ("figure.walk", Color.blue)
+            case "Steps":
+                (image, tintColor) = ("shoeprints.fill", Color.green)
+            case "Calories":
+                (image, tintColor) = ("flame", Color.red)
+            default:
+                (image, tintColor) = ("questionmark.circle", Color.gray)
+            }
+            let card = ChallengeCard(challenge: challenge, image: image, tintColor: tintColor)
+            self.challenges.append(card)
         }
     }
 }

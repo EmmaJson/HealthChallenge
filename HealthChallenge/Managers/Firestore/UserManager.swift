@@ -11,6 +11,9 @@ import FirebaseFirestore
 struct ActiveChallenge: Codable {
     let challengeId: String
     let title: String
+    let description: String
+    let points: Int
+    let type: String
     let startDate: Date
     let endDate: Date
 }
@@ -96,7 +99,7 @@ struct DbUser: Codable {
         case calorieGoal            =   "calorie_goal"
         case stepGoal               =   "step_goal"
         case distanceGoal           =   "distance_goal"
-        case activeChallenges      =   "active_challenges"
+        case activeChallenges       =   "active_challenges"
     }
     
     init(from decoder: any Decoder) throws {
@@ -271,6 +274,9 @@ extension UserManager {
         let activeChallenge = ActiveChallenge(
             challengeId: challenge.id,
             title: challenge.title,
+            description: challenge.description,
+            points: challenge.points,
+            type: challenge.type,
             startDate: startDate,
             endDate: endDate
         )

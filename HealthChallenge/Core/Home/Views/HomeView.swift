@@ -130,7 +130,52 @@ struct HomeView: View {
                         }
                     }
                     .padding(.horizontal)
-                } 
+                }
+                
+                HStack {
+                    Text("Active Challenges")
+                        .font(.title2)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal)
+                
+                if !viewModel.challenges.isEmpty {
+                    LazyVGrid(columns: Array(repeating: GridItem(spacing: 10), count: 1)) {
+                        ForEach(viewModel.challenges, id: \.challenge.challengeId) { challenge in
+                            ChallengeCardView(challenge: challenge)
+                        }
+                    }
+                } else {
+                    VStack {
+                        Spacer()
+                        VStack(spacing: 10) {
+                            Image(systemName: "exclamationmark.circle")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .foregroundColor(.gray.opacity(0.7))
+                            
+                            Text("No Active Challenges")
+                                .font(.title2)
+                                .bold()
+                                .foregroundColor(.primary.opacity(0.8))
+                            
+                            Text("Join a challenge to get started!")
+                                .font(.body)
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color.gray.opacity(0.1))
+                                .shadow(radius: 5)
+                        )
+                        .padding()
+                        
+                        Spacer()
+                    }
+                }
             }
         }
         .refreshable {
