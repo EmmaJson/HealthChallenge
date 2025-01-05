@@ -17,5 +17,9 @@
 	</array>
 	<key>GIDClientID</key>
 	<string>288915965458-ti3349lmqb3bkqr756u38942cuiige9t.apps.googleusercontent.com</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mailto</string>
+	</array>
 </dict>
 </plist>

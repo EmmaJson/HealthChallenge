@@ -135,14 +135,29 @@ struct ProfileView: View {
             
             VStack {
                 ProfileEditButton(image: "envelope", title: "Contact Us") {
-                    print("Button: contact")
+                    viewModel.presentEmail()
                 }
-                ProfileEditButton(image: "text.document", title: "Privacy Policy") {
-                    print("Button: privacy policy")
+                
+                Link(destination: URL(string: "https://github.com/EmmaJson/HealthChallenge/blob/main/Documents/HealthChallenge%20-%20Terms%20of%20Use.pdf")!) {
+                    HStack {
+                        Image(systemName: "text.document")
+                        Text("Terms of Service")
+                    }
+                    .foregroundColor(.primary)
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                ProfileEditButton(image: "text.document", title: "Terms of Service") {
-                    print("Button: terms of service")
+                
+                Link(destination: URL(string: "https://github.com/EmmaJson/HealthChallenge/blob/main/Documents/HealthChallenge%20-%20Privacy%20Policy.pdf")!) {
+                    HStack {
+                        Image(systemName: "text.document")
+                        Text("Privacy Policy")
+                    }
+                    .foregroundColor(.primary)
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                
             }
             .background(
                 RoundedRectangle(cornerRadius: 10)

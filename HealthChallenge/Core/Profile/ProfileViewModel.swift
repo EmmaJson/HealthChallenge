@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
@@ -50,5 +51,24 @@ final class ProfileViewModel: ObservableObject {
         profileImage = selectedImage
         UserDefaults.standard.set(selectedImage, forKey: "profilePicture")
         self.dismissEdit()
+    }
+    
+    func presentEmail() {
+        let emailSubject = "Health Challenge - Contact us"
+        let emailTo = "emmamhm2@gmail.com"
+        
+        let encodingSubject = emailSubject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let encodingTo = emailTo.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        
+        let urlString = "mailto:\(encodingTo)?subject=\(encodingSubject)"
+        
+        guard let url = URL(string: urlString) else {
+            return
+        }
+        
+        if UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
+        }
+        
     }
 }
