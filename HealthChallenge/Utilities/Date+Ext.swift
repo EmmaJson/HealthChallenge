@@ -18,7 +18,6 @@ extension Date {
         components.weekday = 2      // Start fetching on monday
         return calendar.date(from: components) ?? Date()
     }
-    
     func fetchMonthStartAndEndDate() -> (start: Date, end: Date) {
         let calendar = Calendar.current
         var startDateComponent = calendar.dateComponents([.year, .month], from: calendar.startOfDay(for: self))

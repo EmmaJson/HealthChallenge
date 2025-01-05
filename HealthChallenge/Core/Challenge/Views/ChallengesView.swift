@@ -23,35 +23,43 @@ struct ChallengesView: View {
                     .foregroundColor(.gray)
             } else {
                 List(viewModel.challenges) { challenge in
-                    HStack(alignment: .center, spacing: 10) {
-                        // Checkmark Icon
-                        if challenge.type == "Daily" {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
-                                .font(.title3)
-                        } else {
-                            Image(systemName: "circle")
-                                .foregroundColor(.gray)
-                                .font(.title3)
-                        }
-
-                        // Challenge Details
-                        VStack(alignment: .leading, spacing: 10) {
-                            HStack {
-                                Text(challenge.title)
-                                    .font(.headline)
-                                    .fontWeight(.bold)
-                                Spacer()
-                                Text("\(challenge.points) pts")
-                                    .font(.subheadline)
-                                    .foregroundColor(.blue)
+                    Button {
+                        Task {
+                            if viewModel.isChallengeActive(challenge.id) {
+                                await viewModel.unjoinChallenge(challenge)
+                            } else {
+                                await viewModel.joinChallenge(challenge)
                             }
-
-                            Text(challenge.description)
-                                .font(.body)
-                                .foregroundColor(.gray)
                         }
-                        .padding(.vertical, 5)
+                    } label: {
+                        HStack(alignment: .center, spacing: 10) {
+                            if viewModel.isChallengeActive(challenge.id) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                                    .font(.title3)
+                            } else {
+                                Image(systemName: "circle")
+                                    .foregroundColor(.gray)
+                                    .font(.title3)
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 10) {
+                                HStack {
+                                    Text(challenge.title)
+                                        .font(.headline)
+                                        .fontWeight(.bold)
+                                    Spacer()
+                                    Text("\(challenge.points) pts")
+                                        .font(.subheadline)
+                                        .foregroundColor(.blue)
+                                }
+                                
+                                Text(challenge.description)
+                                    .font(.body)
+                                    .foregroundColor(.gray)
+                            }
+                            .padding(.vertical, 5)
+                        }
                     }
                 }
             }

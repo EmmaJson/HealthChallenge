@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct CreateChallengeView: View {
+    @Environment(\.presentationMode) var presentationMode
+
     @State private var title = ""
     @State private var description = ""
     @State private var challengeType = "Distance" // Default challenge type
@@ -56,6 +58,8 @@ struct CreateChallengeView: View {
             Button("Create Challenge") {
                 Task {
                     await createChallenge()
+                    presentationMode.wrappedValue.dismiss()
+                    presentAlert(title: "Success", message: "Challenge created successfully!")
                 }
             }
             .padding()
@@ -66,6 +70,7 @@ struct CreateChallengeView: View {
         .padding()
         .navigationTitle("Create Challenge")
     }
+
 
     private func createChallenge() async {
         guard !title.isEmpty, !description.isEmpty else {

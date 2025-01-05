@@ -151,27 +151,27 @@ extension ChallengeManager {
         let defaultChallenges = [
             Challenge(
                 id: UUID().uuidString,
-                title: "Walk 10,000 Steps",
+                title: "10,000!",
                 description: "Take 10,000 steps today!",
-                points: 50,
-                type: "Calories",
+                points: 10,
+                type: "Steps",
                 interval:"Daily"
             ),
             Challenge(
                 id: UUID().uuidString,
-                title: "Meditate for 10 Minutes",
-                description: "Relax your mind and meditate for 10 minutes.",
-                points: 30,
-                type: "Steps",
-                interval:"Weekly"
+                title: "10 km",
+                description: "Walk 10 kilometers steps today!",
+                points: 10,
+                type: "Distance",
+                interval:"Daily"
             ),
             Challenge(
                 id: UUID().uuidString,
-                title: "Read a Book",
-                description: "Finish one book this month.",
-                points: 100,
+                title: "Burn 10",
+                description: "Burn 10 active calories today!",
+                points: 10,
                 type: "Distance",
-                interval:"Monthly"
+                interval:"Daily"
             )
         ]
 

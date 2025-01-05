@@ -8,6 +8,13 @@
 import Foundation
 import FirebaseFirestore
 
+struct ActiveChallenge: Codable {
+    let challengeId: String
+    let title: String
+    let startDate: Date
+    let endDate: Date
+}
+
 struct DbUser: Codable {
     let userId: String
     let isAnonymous: Bool?
@@ -28,6 +35,8 @@ struct DbUser: Codable {
     let stepGoal: Double?
     let distanceGoal: Double?
     
+    let activeChallenges: [ActiveChallenge]?
+    
     init(auth: AuthDataResultModel) {
         self.userId = auth.uid
         self.isAnonymous = auth.isAnonymous
@@ -41,6 +50,7 @@ struct DbUser: Codable {
         self.calorieGoal = 0
         self.stepGoal = 0
         self.distanceGoal = 0
+        self.activeChallenges = []
     }
     
     init(
@@ -55,7 +65,8 @@ struct DbUser: Codable {
         favouriteChallenge: Challenge? = nil,
         calorieGoal: Double?,
         stepGoal: Double?,
-        distanceGoal: Double?
+        distanceGoal: Double?,
+        activeChallenges: [ActiveChallenge]? = nil
     ) {
         self.userId = userId
         self.isAnonymous = isAnonymous
@@ -69,6 +80,7 @@ struct DbUser: Codable {
         self.calorieGoal = calorieGoal
         self.stepGoal = stepGoal
         self.distanceGoal = distanceGoal
+        self.activeChallenges = activeChallenges
     }
     
     enum CodingKeys: String, CodingKey {
@@ -84,6 +96,7 @@ struct DbUser: Codable {
         case calorieGoal            =   "calorie_goal"
         case stepGoal               =   "step_goal"
         case distanceGoal           =   "distance_goal"
+        case activeChallenges      =   "active_challenges"
     }
     
     init(from decoder: any Decoder) throws {
@@ -100,6 +113,7 @@ struct DbUser: Codable {
         self.calorieGoal = try container.decodeIfPresent(Double.self, forKey: .calorieGoal)
         self.stepGoal = try container.decodeIfPresent(Double.self, forKey: .stepGoal)
         self.distanceGoal = try container.decodeIfPresent(Double.self, forKey: .distanceGoal)
+        self.activeChallenges = try container.decodeIfPresent([ActiveChallenge].self, forKey: .activeChallenges)
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -116,6 +130,7 @@ struct DbUser: Codable {
         try container.encodeIfPresent(self.calorieGoal, forKey: .calorieGoal)
         try container.encodeIfPresent(self.stepGoal, forKey: .stepGoal)
         try container.encodeIfPresent(self.distanceGoal, forKey: .distanceGoal)
+        try container.encodeIfPresent(self.activeChallenges, forKey: .activeChallenges)
     }
 }
 
@@ -232,5 +247,61 @@ extension UserManager {
             return nil
         }
         return (username, avatar)
+    }
+}
+
+
+extension UserManager {
+    func joinChallenge(userId: String, challenge: Challenge) async throws {
+        let startDate = Date()
+        let endDate: Date
+        
+        switch challenge.interval {
+        case "Daily":
+            endDate = Calendar.current.startOfDay(for: Calendar.current.date(byAdding: .hour, value: 24, to: startDate)!)
+        case "Weekly":
+            endDate = Calendar.current.date(byAdding: .day, value: 7, to: startDate) ?? startDate
+        case "Monthly":
+            endDate = Calendar.current.date(byAdding: .day, value: 30, to: startDate) ?? startDate
+        default:
+            print("Invalid challenge type: \(challenge.interval)") // Log the invalid type
+            throw NSError(domain: "Invalid challenge type", code: 1, userInfo: nil)
+        }
+        
+        let activeChallenge = ActiveChallenge(
+            challengeId: challenge.id,
+            title: challenge.title,
+            startDate: startDate,
+            endDate: endDate
+        )
+        
+        // Update Firestore
+        let data: [String: Any] = [
+            "active_challenges": FieldValue.arrayUnion([try Firestore.Encoder().encode(activeChallenge)])
+        ]
+        try await userDocument(userId: userId).updateData(data)
+    }
+    
+    func unjoinChallenge(userId: String, challengeId: String) async throws {
+        // Fetch the user's current active challenges
+        let user = try await getUser(userId: userId)
+        guard let activeChallenges = user.activeChallenges else {
+            print("No active challenges to remove.")
+            return
+        }
+        
+        // Filter out the challenge with the matching challengeId
+        let updatedChallenges = activeChallenges.filter { $0.challengeId != challengeId }
+        
+        // Encode the updated challenges array
+        let encodedChallenges = try updatedChallenges.map { challenge in
+            try Firestore.Encoder().encode(challenge)
+        }
+        
+        // Update Firestore with the serialized array
+        let data: [String: Any] = [
+            "active_challenges": encodedChallenges
+        ]
+        try await userDocument(userId: userId).updateData(data)
     }
 }
