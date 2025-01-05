@@ -8,8 +8,8 @@
 import SwiftUI
 import Charts
 
-struct HealthView: View {
-    @StateObject private var viewModel = HealthKitViewModel()
+struct ChartView: View {
+    @StateObject private var viewModel = ChartViewModel()
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -130,5 +130,5 @@ struct StatisticCardView: View {
 }
 
 #Preview {
-    HealthView()
+    ChartView()
 }

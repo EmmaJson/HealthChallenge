@@ -16,7 +16,7 @@ struct LeaderboardUser: Codable, Identifiable {
 struct LeaderboardView: View {
     @AppStorage("username") var username: String?
     @StateObject var viewModel = LeaderboardViewModel()
-    
+        
     @Binding var showTermsOfService: Bool
     
     var body: some View {
@@ -86,25 +86,23 @@ struct LeaderboardView: View {
             }
         }
         .frame(maxHeight: .infinity, alignment: .top)
+        .alert("Ooops", isPresented: $viewModel.showAlert, actions: {
+            Button {
+                viewModel.showAlert = false
+            } label: {
+                Text("Ok")
+                    .foregroundColor(.blue)
+            }
+        }, message: {
+            Text("There was an issue loading the leaderboard data, please try again")
+        })
         .onChange(of: showTermsOfService) { _ in
             if !showTermsOfService && username != nil {
-                Task {
-                    do {
-                        try await viewModel.updateLeaderboard()
-                    } catch {
-                        print(error.localizedDescription)
-                    }
-                }
+                viewModel.updateLeaderboard()
             }
         }
         .refreshable {
-            Task {
-                do {
-                    try await viewModel.updateLeaderboard()
-                } catch {
-                    print(error.localizedDescription)
-                }
-            }
+            viewModel.updateLeaderboard()
         }
     }
 }

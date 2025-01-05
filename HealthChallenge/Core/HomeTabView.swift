@@ -23,7 +23,7 @@ struct HomeTabView: View {
                     Text("Home")
                 }
             
-            HealthView()
+            ChartView()
                 .tag("Charts")
                 .tabItem {
                     Image(systemName: "chart.line.uptrend.xyaxis")

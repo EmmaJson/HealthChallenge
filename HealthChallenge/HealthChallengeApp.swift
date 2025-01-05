@@ -43,7 +43,7 @@ struct HealthChallengeApp: App {
                                     .font(.headline)
                             }
                         }                 
-                    }
+                }.background(Color.accentColor.opacity(0.5))
             }
         }
     }

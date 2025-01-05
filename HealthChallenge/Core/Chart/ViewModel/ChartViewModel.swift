@@ -27,7 +27,7 @@ enum MetricType: String, CaseIterable, Identifiable {
 }
 
 @MainActor
-final class HealthKitViewModel: ObservableObject {
+final class ChartViewModel: ObservableObject {
     @Published var labels: [String] = []
     @Published var data: [Double] = []
     @Published var average: Double = 0

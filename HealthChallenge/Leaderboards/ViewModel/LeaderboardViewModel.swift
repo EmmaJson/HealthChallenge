@@ -10,6 +10,7 @@ import Foundation
 class LeaderboardViewModel: ObservableObject {
     
     @Published var currentUserId: String = ""
+    @Published var showAlert = false
     
     @Published var leaderResult = LeaderboardResult(user: nil, top10: [])
     var mockData = [
@@ -31,21 +32,25 @@ class LeaderboardViewModel: ObservableObject {
     }
     
     init() {
-        Task {
-            do {
-                try await updateLeaderboard()
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
+        updateLeaderboard()
     }
     
-    func updateLeaderboard() async throws {
-        await fetchLoggedInUserId()
-        try await postStepCountUpdateForUser()
-        let result = try await fecthLeaderboard()
-        DispatchQueue.main.async {
-            self.leaderResult = result
+    func updateLeaderboard() {
+        Task {
+            do {
+                await fetchLoggedInUserId()
+                try await postStepCountUpdateForUser()
+                let result = try await fecthLeaderboard()
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    self.leaderResult = result
+                }
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    self.showAlert = true
+                }
+            }
         }
     }
     
@@ -62,15 +67,19 @@ class LeaderboardViewModel: ObservableObject {
         }
     }
 
+    enum LeaderBoardViewModelError: Error {
+        case unableToFetchUsername
+        case unableTooFetchLoggedInUserId
+    }
     
     private func postStepCountUpdateForUser() async throws {
         guard let username = UserDefaults.standard.string(forKey: "username") else {
-            throw URLError(.badURL)
+            throw LeaderBoardViewModelError.unableToFetchUsername
         }
         let steps =  try await fetchCurrentWeekStepCount()
         try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: currentUserId, username: username, count: Int(steps)))
-        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "t8xV64HGDuNuWN9SMsb0TsXh5kk1", username: "Lova", count: Int(12323)))
-        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "YYKEJE5AMCND575bHLJN80L95yg1", username: "Julia", count: Int(9345)))
+        //try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "t8xV64HGDuNuWN9SMsb0TsXh5kk1", username: "Lova", count: Int(12323)))
+        //try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "YYKEJE5AMCND575bHLJN80L95yg1", username: "Julia", count: Int(9345)))
     }
     
     private func fetchCurrentWeekStepCount() async throws -> Double {
@@ -88,7 +97,7 @@ class LeaderboardViewModel: ObservableObject {
                 self.currentUserId = userId
             }
         } catch {
-            print("Error fetching logged-in user: \(error.localizedDescription)")
+            LeaderBoardViewModelError.unableTooFetchLoggedInUserId
         }
     }
 }
