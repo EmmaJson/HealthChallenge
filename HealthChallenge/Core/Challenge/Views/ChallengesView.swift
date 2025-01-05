@@ -86,8 +86,10 @@ struct ChallengesView: View {
             .padding()
         }
         .navigationTitle("Challenges")
-        .task {
-            await viewModel.loadChallenges()
+        .onAppear {
+            Task {
+                await viewModel.loadChallenges()
+            }
         }
     }
 }

@@ -10,8 +10,10 @@ import Foundation
 @Observable
 class LeaderboardViewModel {
     var showAlert = false
+    var steps = 0.0
     
     var leaderResult = LeaderboardResult(user: nil, top10: [])
+    
     var mockData = [
         LeaderboardUser(id: "1",  username: "Emma", count: 2342),
         LeaderboardUser(id: "2",  username: "Lova", count: 2342),
@@ -41,6 +43,7 @@ class LeaderboardViewModel {
                 let result = try await fecthLeaderboard()
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
+                    self.showAlert = false
                     self.leaderResult = result
                 }
             } catch {
@@ -75,8 +78,15 @@ class LeaderboardViewModel {
         guard let username = UserDefaults.standard.string(forKey: "username") else {
             throw LeaderBoardViewModelError.unableToFetchUsername
         }
-        let steps =  try await fetchCurrentWeekStepCount()
+        do {
+            self.steps =  try await fetchCurrentWeekStepCount()
+
+        } catch {
+            self.steps = 0
+        }
         try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: userId, username: username, count: Int(steps)))
+        
+        // MARK: Add mockdata for leaderboard
         //try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "t8xV64HGDuNuWN9SMsb0TsXh5kk1", username: "Lova", count: Int(12323)))
         //try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "YYKEJE5AMCND575bHLJN80L95yg1", username: "Julia", count: Int(9345)))
     }

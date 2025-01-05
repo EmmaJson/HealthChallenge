@@ -19,7 +19,9 @@ class HomeViewModel {
     var activities = [ActivityCard]()
     private var activeChallenges = [ActiveChallenge]()
     var challenges = [ChallengeCard]()
-
+    var completedChallenges = [PastChallenge]()
+    
+    
     var currentCalorieGoal: Double = 0
     var currentStepGoal: Double = 0
     var currentDistanceGoal: Double = 0
@@ -39,8 +41,12 @@ class HomeViewModel {
         }
         Task {
             await self.fetchGoals()
-            await fetchActiveChallenges()
+            await checkExpiredChallenges()
+            await self.fetchCompletedChallenges()
+            await self.fetchActiveChallenges()
+            await self.refreshChallenges()
         }
+        startDailyUpdate()
     }
     
     /// Authorizes HealthKit and fetches data if successful
@@ -76,6 +82,9 @@ class HomeViewModel {
         fetchTodayHeartRate()
         fetchTodayActive()
         Task {
+            await refreshChallenges()
+            await checkExpiredChallenges()
+            await fetchCompletedChallenges()
             await fetchActiveChallenges()
         }
     }
@@ -187,7 +196,7 @@ class HomeViewModel {
             }
         }
     }
-
+    
     private func sortActivities() {
         self.activities.sort { lhs, rhs in
             guard let lhsIndex = activityOrder.firstIndex(of: lhs.title),
@@ -208,7 +217,7 @@ class HomeViewModel {
             self.stepGoal = self.currentStepGoal
             self.distanceGoal = self.currentDistanceGoal
         }
-
+        
         Task {
             try await Task.sleep(nanoseconds: 200_000_000) // 200 milliseconds
             print("Saving updated goals: Calorie=\(self.calorieGoal), Steps=\(self.stepGoal), Distance=\(self.distanceGoal)")
@@ -236,8 +245,8 @@ extension HomeViewModel {
             print("Failed to save goals: \(error.localizedDescription)")
         }
     }
-
-
+    
+    
     private func fetchGoals() async {
         let userId = AuthenticationManager.shared.getAuthenticatedUserId()
         do {
@@ -288,3 +297,51 @@ extension HomeViewModel {
         }
     }
 }
+
+
+// MARK: Check challenges
+extension HomeViewModel {
+    
+    func fetchCompletedChallenges() async {
+        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+        do {
+            self.completedChallenges.removeAll()
+            let allChallenges = try await UserManager.shared.fetchPastChallenges(userId: userId)
+            let completedChallenges = allChallenges.filter { $0.isCompleted }
+            
+            DispatchQueue.main.async {
+                self.completedChallenges = completedChallenges
+            }
+        } catch {
+            print("Failed to fetch past challenges: \(error.localizedDescription)")
+        }
+    }
+    
+    func refreshChallenges() async {
+        do {
+            let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+            try await UserManager.shared.checkAndCompleteChallenges(userId: userId, steps: steps, distance: distance, caloriesBurned: calories)
+            await fetchActiveChallenges()
+        } catch {
+            print("Failed to refresh challenges: \(error.localizedDescription)")
+        }
+    }
+    
+    func checkExpiredChallenges() async {
+        do {
+            let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+            try await UserManager.shared.moveExpiredChallenges(userId: userId)
+            await fetchActiveChallenges() // Refresh active challenges
+        } catch {
+            print("Failed to check expired challenges: \(error.localizedDescription)")
+        }
+    }
+    func startDailyUpdate() {
+        Timer.scheduledTimer(withTimeInterval: 86400, repeats: true) { _ in // Every 24 hours
+            Task {
+                await self.checkExpiredChallenges()
+            }
+        }
+    }
+}
+

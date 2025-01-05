@@ -18,6 +18,12 @@ struct ActiveChallenge: Codable {
     let endDate: Date
 }
 
+struct PastChallenge: Codable {
+    let finishedChallengeId = UUID()
+    let challenge: ActiveChallenge
+    let isCompleted: Bool
+}
+
 struct DbUser: Codable {
     let userId: String
     let isAnonymous: Bool?
@@ -39,6 +45,8 @@ struct DbUser: Codable {
     let distanceGoal: Double?
     
     let activeChallenges: [ActiveChallenge]?
+    let pastChallenges: [PastChallenge]?
+    let points: Int?
     
     init(auth: AuthDataResultModel) {
         self.userId = auth.uid
@@ -54,6 +62,8 @@ struct DbUser: Codable {
         self.stepGoal = 0
         self.distanceGoal = 0
         self.activeChallenges = []
+        self.pastChallenges = []
+        self.points = 0
     }
     
     init(
@@ -69,7 +79,9 @@ struct DbUser: Codable {
         calorieGoal: Double?,
         stepGoal: Double?,
         distanceGoal: Double?,
-        activeChallenges: [ActiveChallenge]? = nil
+        activeChallenges: [ActiveChallenge]? = nil,
+        pastChallenges: [PastChallenge]? = nil,
+        points: Int?
     ) {
         self.userId = userId
         self.isAnonymous = isAnonymous
@@ -84,6 +96,8 @@ struct DbUser: Codable {
         self.stepGoal = stepGoal
         self.distanceGoal = distanceGoal
         self.activeChallenges = activeChallenges
+        self.pastChallenges = pastChallenges
+        self.points = points
     }
     
     enum CodingKeys: String, CodingKey {
@@ -100,6 +114,8 @@ struct DbUser: Codable {
         case stepGoal               =   "step_goal"
         case distanceGoal           =   "distance_goal"
         case activeChallenges       =   "active_challenges"
+        case pastChallenges         =   "past_challenges"
+        case points                 =   "points"
     }
     
     init(from decoder: any Decoder) throws {
@@ -117,6 +133,8 @@ struct DbUser: Codable {
         self.stepGoal = try container.decodeIfPresent(Double.self, forKey: .stepGoal)
         self.distanceGoal = try container.decodeIfPresent(Double.self, forKey: .distanceGoal)
         self.activeChallenges = try container.decodeIfPresent([ActiveChallenge].self, forKey: .activeChallenges)
+        self.pastChallenges = try container.decodeIfPresent([PastChallenge].self, forKey: .pastChallenges)
+        self.points = try container.decodeIfPresent(Int.self, forKey: .points)
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -134,6 +152,8 @@ struct DbUser: Codable {
         try container.encodeIfPresent(self.stepGoal, forKey: .stepGoal)
         try container.encodeIfPresent(self.distanceGoal, forKey: .distanceGoal)
         try container.encodeIfPresent(self.activeChallenges, forKey: .activeChallenges)
+        try container.encodeIfPresent(self.pastChallenges, forKey: .pastChallenges)
+        try container.encodeIfPresent(self.points, forKey: .points)
     }
 }
 
@@ -310,4 +330,97 @@ extension UserManager {
         ]
         try await userDocument(userId: userId).updateData(data)
     }
+}
+
+// MARK: Complete challenges
+extension UserManager {
+    func completeChallenge(userId: String, challengeId: String) async throws {
+        let user = try await getUser(userId: userId)
+        guard let activeChallenges = user.activeChallenges else { return }
+
+        // Find the completed challenge
+        guard let completedChallenge = activeChallenges.first(where: { $0.challengeId == challengeId }) else {
+            print("Challenge not found.")
+            return
+        }
+
+        let updatedActiveChallenges = activeChallenges.filter { $0.challengeId != challengeId }
+        var updatedPastChallenges = user.pastChallenges ?? []
+        updatedPastChallenges.append(PastChallenge(challenge: ActiveChallenge(challengeId: completedChallenge.challengeId, title: completedChallenge.title, description: completedChallenge.description, points: completedChallenge.points, type: completedChallenge.type, startDate: completedChallenge.startDate, endDate: Date()), isCompleted: true))
+
+        // Serialize and log data for debugging
+        let encodedActiveChallenges = try updatedActiveChallenges.map { challenge in
+            try Firestore.Encoder().encode(challenge)
+        }
+        print("Encoded Active Challenges: \(encodedActiveChallenges)")
+
+        let encodedPastChallenges = try updatedPastChallenges.map { pastChallenge in
+            try Firestore.Encoder().encode(pastChallenge)
+        }
+        print("Encoded Past Challenges: \(encodedPastChallenges)")
+
+        // Update Firestore
+        let data: [String: Any] = [
+            "active_challenges": encodedActiveChallenges,
+            "past_challenges": encodedPastChallenges,
+            "points": (user.points ?? 0) + completedChallenge.points
+        ]
+        try await userDocument(userId: userId).updateData(data)
+    }
+    
+    func moveExpiredChallenges(userId: String) async throws {
+        let user = try await getUser(userId: userId)
+        guard let activeChallenges = user.activeChallenges else { return }
+
+        let now = Date()
+        let expiredChallenges = activeChallenges.filter { $0.endDate < now }
+        let updatedActiveChallenges = activeChallenges.filter { $0.endDate >= now }
+
+        var updatedPastChallenges = user.pastChallenges ?? []
+        for expiredChallenge in expiredChallenges {
+            updatedPastChallenges.append(PastChallenge(challenge: expiredChallenge, isCompleted: false))
+        }
+
+        let data: [String: Any] = [
+            "active_challenges": try Firestore.Encoder().encode(updatedActiveChallenges),
+            "past_challenges": try Firestore.Encoder().encode(updatedPastChallenges)
+        ]
+        try await userDocument(userId: userId).updateData(data)
+    }
+}
+
+extension UserManager {
+    func checkAndCompleteChallenges(userId: String, steps: Int, distance: Int, caloriesBurned: Int) async throws {
+        let user = try await getUser(userId: userId)
+        guard let activeChallenges = user.activeChallenges else { return }
+
+        for challenge in activeChallenges {
+            var isComplete = false
+
+            // Check if health data meets challenge goals
+            switch challenge.type {
+            case "Steps":
+                isComplete = steps >= challenge.points * 1000 // 1 p = 1000 steps
+            case "Distance":
+                isComplete = distance >= challenge.points // 1 p = 1 km
+            case "Calories":
+                isComplete = caloriesBurned >= challenge.points * 100 // 1 p = 100 kcal
+            default:
+                continue
+            }
+
+            if isComplete {
+                try await completeChallenge(userId: userId, challengeId: challenge.challengeId)
+            }
+        }
+    }
+    
+    func fetchPastChallenges(userId: String) async throws -> [PastChallenge] {
+        let user = try await getUser(userId: userId)
+        guard let pastChallenges = user.pastChallenges else {
+            return []
+        }
+        return pastChallenges
+    }
+    
 }

@@ -8,6 +8,12 @@
 import Foundation
 
 extension Date {
+    
+    var iso8601String: String {
+        let formatter = ISO8601DateFormatter()
+        return formatter.string(from: self)
+    }
+    
     static func startOfDay(for date: Date = Date()) -> Date {
         return Calendar.current.startOfDay(for: date)
     }

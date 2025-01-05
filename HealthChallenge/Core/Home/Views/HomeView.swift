@@ -179,6 +179,54 @@ struct HomeView: View {
                         Spacer()
                     }
                 }
+             
+                // MARK: Past Challenges-
+                HStack {
+                    Text("Past Challenges")
+                        .font(.title2)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.top)
+
+                if !viewModel.completedChallenges.isEmpty {
+                    LazyVGrid(columns: Array(repeating: GridItem(spacing: 10), count: 1)) {
+                        ForEach(viewModel.completedChallenges, id: \.finishedChallengeId) { pastChallenge in
+                            ChallengeCardView(challenge: ChallengeCard(challenge: pastChallenge.challenge, image: "trophy.fill", tintColor: Color.yellow))
+                        }
+                    }
+                    .padding(.bottom)
+                } else {
+                    VStack {
+                        Spacer()
+                        VStack(spacing: 10) {
+                            Image(systemName: "exclamationmark.circle")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .foregroundColor(.gray.opacity(0.7))
+                            
+                            Text("No Finished Challenges")
+                                .font(.title2)
+                                .bold()
+                                .foregroundColor(.primary.opacity(0.8))
+                            
+                            Text("Join a challenge to get started!")
+                                .font(.body)
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color.gray.opacity(0.1))
+                                .shadow(radius: 5)
+                        )
+                        .padding()
+                        
+                        Spacer()
+                    }
+                }
             }
         }
         .onAppear {

@@ -24,6 +24,12 @@ final class ProfileViewModel {
     var images = ["avatar 1", "avatar 2", "avatar 3", "avatar 4", "avatar 5", "avatar 6", "avatar 7", "avatar 8", "avatar 9", "avatar 10", "avatar 11", "avatar 12", "avatar 13", "avatar 14", "avatar 15", "avatar 16", "avatar 17", "avatar 18", "avatar 19", "avatar 20"
     ]
     
+    init() {
+        Task {
+            await fetchProfile()
+        }
+    }
+    
     func presentEditName() {
         isEditingProfilePicture = false
         isEditingName.toggle()
@@ -106,6 +112,29 @@ extension ProfileViewModel {
             print("Goals saved profile!")
         } catch {
             print("Failed to save profile: \(error.localizedDescription)")
+        }
+    }
+    
+    func fetchProfile() async {
+        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+        do {
+            if let profile = try await UserManager.shared.getUserProfile(userId: userId) {
+                // Update ViewModel properties
+                DispatchQueue.main.async {
+                    self.currentName = profile.username
+                    self.profileName = profile.username
+                    self.selectedImage = profile.avatar
+                    self.profileImage = profile.avatar
+                    
+                    // Save to UserDefaults for persistence
+                    UserDefaults.standard.set(profile.username, forKey: "username")
+                    UserDefaults.standard.set(profile.avatar, forKey: "avatar")
+                }
+            } else {
+                print("No profile data found for user: \(userId)")
+            }
+        } catch {
+            print("Failed to fetch profile data: \(error.localizedDescription)")
         }
     }
 }

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import FirebaseAuth
 
 @MainActor
 @Observable
@@ -20,21 +19,13 @@ final class ChallengesViewModel {
     var errorMessage: String? = nil
     let challengeManager = ChallengeManager.shared
 
-    private var currentUserId: String? {
-        Auth.auth().currentUser?.uid
-    }
+    private var currentUserId = AuthenticationManager.shared.getAuthenticatedUserId()
     
-    init() {
-        Task {
-            await self.loadChallenges()
-            await fetchActiveChallenges()
-        }
-    }
-
     func loadChallenges() async {
         isLoading = true
         errorMessage = nil
         do {
+            self.currentUserId = AuthenticationManager.shared.getAuthenticatedUserId()
             challenges.removeAll()
             let intervals = ["Daily", "Weekly", "Monthly"]
             for interval in intervals {
@@ -48,9 +39,8 @@ final class ChallengesViewModel {
     }
     
     func joinChallenge(_ challenge: Challenge) async {
-        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
         do {
-            try await UserManager.shared.joinChallenge(userId: userId, challenge: challenge)
+            try await UserManager.shared.joinChallenge(userId: currentUserId, challenge: challenge)
             print("Successfully joined challenge: \(challenge.title)")
             await fetchActiveChallenges()
         } catch {
@@ -59,9 +49,8 @@ final class ChallengesViewModel {
     }
     
     func unjoinChallenge(_ challenge: Challenge) async {
-        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
         do {
-            try await UserManager.shared.unjoinChallenge(userId: userId, challengeId: challenge.id)
+            try await UserManager.shared.unjoinChallenge(userId: currentUserId, challengeId: challenge.id)
             print("Successfully unjoined challenge: \(challenge.title)")
             await fetchActiveChallenges()
         } catch {
@@ -70,9 +59,8 @@ final class ChallengesViewModel {
     }
     
     func fetchActiveChallenges() async {
-        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
         do {
-            let user = try await UserManager.shared.getUser(userId: userId)
+            let user = try await UserManager.shared.getUser(userId: currentUserId)
             self.activeChallenges = user.activeChallenges ?? []
         } catch {
             print("Failed to fetch active challenges: \(error.localizedDescription)")
