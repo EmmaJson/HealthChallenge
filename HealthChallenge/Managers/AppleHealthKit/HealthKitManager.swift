@@ -5,6 +5,7 @@
 //  Created by Emma Johansson on 2024-12-30.
 //
 
+import Foundation
 import HealthKit
 
 class HealthKitManager {
@@ -23,7 +24,9 @@ class HealthKitManager {
                     Logger.error("HealthKit authorization denied.")
                 }
             case .failure(let error):
-                Logger.error("HealthKit authorization error: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    presentAlert(title: "Ooops", message: "We were unable to access your health data. Please allow us to access your health data in your settings to use the app")
+                }
             }
         }
     }

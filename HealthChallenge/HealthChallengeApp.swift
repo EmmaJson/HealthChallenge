@@ -47,6 +47,7 @@ struct HealthChallengeApp: App {
             }
         }
     }
+    
     private func scheduleTestNotification() {
             let content = UNMutableNotificationContent()
             content.title = "Test Notification"
