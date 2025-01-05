@@ -38,7 +38,7 @@ struct ChallengeCardView: View {
 
                     Spacer()
                     
-                    Text(challenge.challenge.startDate, format: .dateTime.day().month())
+                    Text("Ends at \(challenge.challenge.endDate, format: .dateTime.day().month())")
                         .font(.subheadline)
                 }
             }

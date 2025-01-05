@@ -257,6 +257,7 @@ extension HomeViewModel {
 
 extension HomeViewModel {
     func fetchActiveChallenges() async {
+        activeChallenges.removeAll()
         let userId = AuthenticationManager.shared.getAuthenticatedUserId()
         do {
             let user = try await UserManager.shared.getUser(userId: userId)

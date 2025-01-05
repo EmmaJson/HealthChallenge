@@ -12,10 +12,12 @@ import FirebaseAuth
 @Observable
 final class ChallengesViewModel {
     var challenges: [Challenge] = []
+    var groupedChallenges: [String: [Challenge]] {
+        Dictionary(grouping: challenges, by: { $0.interval }) // Assuming `Challenge` has an `interval` property
+    }
     var activeChallenges: [ActiveChallenge] = []
     var isLoading: Bool = false
     var errorMessage: String? = nil
-    
     let challengeManager = ChallengeManager.shared
 
     private var currentUserId: String? {
@@ -24,16 +26,21 @@ final class ChallengesViewModel {
     
     init() {
         Task {
-            await self.loadChallenges(type: "Daily")
+            await self.loadChallenges()
             await fetchActiveChallenges()
         }
     }
 
-    func loadChallenges(type: String) async {
+    func loadChallenges() async {
         isLoading = true
         errorMessage = nil
         do {
-            challenges = try await ChallengeManager.shared.getChallenges(interval: "Daily")
+            challenges.removeAll()
+            let intervals = ["Daily", "Weekly", "Monthly"]
+            for interval in intervals {
+                let loadedChallenges = try await ChallengeManager.shared.getChallenges(interval: interval)
+                challenges.append(contentsOf: loadedChallenges)
+            }
         } catch {
             errorMessage = "Failed to load challenges: \(error.localizedDescription)"
         }

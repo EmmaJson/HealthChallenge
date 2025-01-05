@@ -132,6 +132,7 @@ struct HomeView: View {
                     .padding(.horizontal)
                 }
                 
+                
                 HStack {
                     Text("Active Challenges")
                         .font(.title2)
@@ -139,6 +140,7 @@ struct HomeView: View {
                     Spacer()
                 }
                 .padding(.horizontal)
+                .padding(.top)
                 
                 if !viewModel.challenges.isEmpty {
                     LazyVGrid(columns: Array(repeating: GridItem(spacing: 10), count: 1)) {
@@ -146,6 +148,7 @@ struct HomeView: View {
                             ChallengeCardView(challenge: challenge)
                         }
                     }
+                    .padding(.bottom)
                 } else {
                     VStack {
                         Spacer()
@@ -177,6 +180,10 @@ struct HomeView: View {
                     }
                 }
             }
+        }
+        .onAppear {
+            viewModel.refreshData()
+            print("Refresh data")
         }
         .refreshable {
             viewModel.refreshData()
