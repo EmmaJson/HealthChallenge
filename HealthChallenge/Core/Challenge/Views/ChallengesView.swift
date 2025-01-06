@@ -38,7 +38,7 @@ struct ChallengesView: View {
                                             }
                                         }
                                     } label: {
-                                        HStack(alignment: .center, spacing: 10) {
+                                        HStack(alignment: .center, spacing: 20) {
                                             if viewModel.isChallengeActive(challenge.id) {
                                                 Image(systemName: "checkmark.circle.fill")
                                                     .foregroundColor(Color.theme.colorGreen)
@@ -49,22 +49,34 @@ struct ChallengesView: View {
                                                     .font(.title3)
                                             }
                                             
-                                            VStack(alignment: .leading, spacing: 10) {
-                                                HStack {
-                                                    Text(challenge.title)
-                                                        .font(.headline)
-                                                        .fontWeight(.bold)
-                                                    Spacer()
-                                                    Text("\(challenge.points) pts")
-                                                        .font(.subheadline)
-                                                        .foregroundColor(Color.theme.colorBlue)
+                                            ZStack {
+                                                VStack(alignment: .leading, spacing: 1) {
+                                                    HStack(alignment: .center) {
+                                                        VStack(alignment: .leading, spacing: 1) {
+                                                            Text(challenge.title)
+                                                                .font(.headline)
+                                                                .fontWeight(.bold)
+                                                            Text(challenge.description)
+                                                                .font(.body)
+                                                                .foregroundColor(Color.theme.secondaryText)
+                                                                .padding(.top, 4)
+                                                        }
+                                                        
+                                                        Spacer()
+                                                        VStack(alignment: .center) {
+                                                            Text("\(challenge.points) pts")
+                                                                .font(.subheadline)
+                                                                .foregroundColor(Color.theme.colorBlue)
+                                                            Image(systemName: symbolForChallengeType(challenge.type))
+                                                                .foregroundColor(.gray)
+                                                                .font(.title3)
+                                                                .padding(.top, 0.1)
+                                                        }
+                                                    }
+                                                    
+
                                                 }
-                                                
-                                                Text(challenge.description)
-                                                    .font(.body)
-                                                    .foregroundColor(Color.theme.secondaryText)
                                             }
-                                            .padding(.vertical, 5)
                                         }
                                     }
                                 }
@@ -93,4 +105,21 @@ struct ChallengesView: View {
             }
         }
     }
+    
+    private func symbolForChallengeType(_ type: String) -> String {
+        switch type {
+        case "Distance":
+            return "figure.walk"
+        case "Steps":
+            return "shoeprints.fill"
+        case "Calories":
+            return "flame.fill"
+        default:
+            return "questionmark.circle"
+        }
+    }
+}
+
+#Preview {
+    ChallengesView()
 }
