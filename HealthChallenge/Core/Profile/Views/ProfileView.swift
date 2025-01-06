@@ -12,34 +12,14 @@ struct ProfileView: View {
     @Binding var showSignInView: Bool
     
     var body: some View {
-        VStack {
-            HStack {
-                Image(viewModel.profileImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 100, height: 100)
-                    .padding(8)
-                    .onTapGesture {
-                        withAnimation(.easeInOut(duration: 0.05)) {
-                            viewModel.presentEditImage()
-                        }
-                    }
-                
-                VStack(alignment: .leading) {
-                    Text(viewModel.welcomeMessage)
-                        .font(.title)
-                        .foregroundColor(.accentColor)
-                    
-                    Text(viewModel.profileName)
-                        .font(.title2)
-                }
-                Spacer()
-            }
-            
+        ScrollView(showsIndicators: false) {
             VStack {
-                editSection
-                
-                serviceSection
+                profileSection
+                VStack {
+                    accountSection
+                    editSection
+                    serviceSection
+                }
             }
         }
         .padding()
@@ -68,6 +48,68 @@ struct ProfileView: View {
 }
 
 extension ProfileView {
+    private var accountSection: some View {
+        Section {
+            VStack(alignment: .leading) {
+                
+                VStack(alignment: .leading) {
+                    
+                    ProfileEditButton(image: "star", title: "Points Garthered: \(viewModel.totalPoints)") {
+                        withAnimation(.easeInOut(duration: 0.05)) {
+                            viewModel.presentEditImage()
+                        }
+                    }
+                    ProfileEditButton(image: "trophy", title: "Challenges Completed: \(viewModel.totalPoints)") {
+                        withAnimation(.easeInOut(duration: 0.05)) {
+                            viewModel.presentEditImage()
+                        }
+                    }
+                    
+                    if viewModel.authenticationProviders.isEmpty {
+                        HStack(spacing: 16) {
+                            Text("No Providers Connected")
+                        }
+                        .foregroundColor(.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                    } else {
+                        HStack(spacing: 16) {
+                            Text("Providers")
+                            
+                            Spacer()
+                            
+                            HStack {
+                                ForEach(viewModel.authenticationProviders, id: \.self) { image in
+                                    Image(image)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 24, height: 24)
+                                        .padding(.trailing, 8)
+                                }
+                            }
+                        }
+                        .foregroundColor(.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                    }
+                }
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.accent.opacity(0.1))
+            )
+        } header: {
+            HStack() {
+                Text("ACCOUNT").opacity(0.8)
+                    .font(.footnote)
+                Spacer()
+            }
+            .padding(.leading)
+            .padding(.top)
+            .frame(maxWidth: .infinity)
+        }
+    }
+    
     private var editSection: some View {
         Section {
             VStack {
@@ -160,6 +202,7 @@ extension ProfileView {
         } header: {
             HStack() {
                 Text("EDIT PROFILE").opacity(0.8)
+                    .font(.footnote)
                 Spacer()
             }
             .padding(.leading)
@@ -167,7 +210,7 @@ extension ProfileView {
             .frame(maxWidth: .infinity)
         }
     }
-
+    
     
     private var serviceSection: some View {
         Section {
@@ -203,11 +246,39 @@ extension ProfileView {
         } header: {
             HStack() {
                 Text("MANAGEMENT").opacity(0.8)
+                    .font(.footnote)
                 Spacer()
             }
             .padding(.leading)
             .padding(.top)
             .frame(maxWidth: .infinity)
+        }
+    }
+    
+    private var profileSection: some View {
+        Section {
+            HStack {
+                Image(viewModel.profileImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 100, height: 100)
+                    .padding(8)
+                    .onTapGesture {
+                        withAnimation(.easeInOut(duration: 0.05)) {
+                            viewModel.presentEditImage()
+                        }
+                    }
+                
+                VStack(alignment: .leading) {
+                    Text(viewModel.welcomeMessage)
+                        .font(.title)
+                        .foregroundColor(.accentColor)
+                    
+                    Text(viewModel.profileName)
+                        .font(.title2)
+                }
+                Spacer()
+            }
         }
     }
 }

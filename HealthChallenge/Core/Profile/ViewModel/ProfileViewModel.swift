@@ -16,6 +16,10 @@ final class ProfileViewModel {
     var isEditingProfilePicture = false
     var welcomeMessage: String = "Good Morning"
     
+    var authenticationProviders: [String] = []
+    var completedChallenges: Int = 0
+    var totalPoints: Int = 0
+    
     var currentName = ""
     var profileName = UserDefaults.standard.string(forKey: "username") ?? "[Set a Name]"
 
@@ -122,19 +126,52 @@ extension ProfileViewModel {
         let userId = AuthenticationManager.shared.getAuthenticatedUserId()
         do {
             if let profile = try await UserManager.shared.getUserProfile(userId: userId) {
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
                     self.profileName = profile.username
                     self.selectedImage = profile.avatar
                     self.profileImage = profile.avatar
                     
                     UserDefaults.standard.set(profile.username, forKey: "username")
                     UserDefaults.standard.set(profile.avatar, forKey: "avatar")
+                    
+                    self.getUsersProviders()
                 }
             } else {
                 print("No profile data found for user: \(userId)")
             }
         } catch {
             print("Failed to fetch profile data: \(error.localizedDescription)")
+        }
+    }
+}
+
+extension ProfileViewModel {
+    private func getUsersProviders() {
+        authenticationProviders.removeAll()
+        do {
+            let authProviders = try AuthenticationManager.shared.getProviders()
+            for provider in authProviders {
+                switch(provider) {
+                case .email: authenticationProviders.append("Email")
+                case .google: authenticationProviders.append("Google")
+                }
+            }
+        } catch {
+            Logger.error("Error getting providers: \(error)")
+        }
+    }
+    
+    func fetchUserStats() async {
+        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+        do {
+            let stats = try await UserManager.shared.getUserStats(userId: userId)
+            DispatchQueue.main.async { [weak self] in
+                self?.completedChallenges = stats.completedChallenges
+                self?.totalPoints = stats.totalPoints
+            }
+        } catch {
+            print("Failed to fetch user stats: \(error.localizedDescription)")
         }
     }
 }

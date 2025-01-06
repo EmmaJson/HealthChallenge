@@ -373,3 +373,17 @@ extension UserManager {
         activeListeners.append(activeChallengesListener)
     }
 }
+
+// MARK: UserStats for profile
+extension UserManager {
+    func getUserStats(userId: String) async throws -> (completedChallenges: Int, totalPoints: Int) {
+        // Fetch the user's data
+        let user = try await getUser(userId: userId)
+        
+        // Calculate completed challenges and points
+        let completedChallenges = user.pastChallenges?.filter { $0.isCompleted }.count ?? 0
+        let totalPoints = user.points ?? 0
+        
+        return (completedChallenges, totalPoints)
+    }
+}
