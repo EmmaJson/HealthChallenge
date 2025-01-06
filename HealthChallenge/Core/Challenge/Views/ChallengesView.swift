@@ -92,7 +92,7 @@ struct ChallengesView: View {
                     .foregroundColor(Color.theme.primaryText)
                     .frame(height: 55)
                     .frame(maxWidth: .infinity)
-                    .background(Color.orange)
+                    .background(Color.theme.accent)
                     .cornerRadius(10)
             }
             .padding()
