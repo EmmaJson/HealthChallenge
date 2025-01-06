@@ -82,7 +82,6 @@ extension AuthenticationManager {
             throw URLError(.badServerResponse)
         }
         try await Auth.auth().currentUser?.updatePassword(to: password)
-    
     }
     
     func updateEmail(email: String) async throws {
@@ -90,9 +89,7 @@ extension AuthenticationManager {
             throw URLError(.badServerResponse)
         }
         try await Auth.auth().currentUser?.updateEmail(to: email)
-    
     }
-    
 }
 
 // MARK: SIGN IN SSO

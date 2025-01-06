@@ -35,6 +35,10 @@ final class UserManager {
         try userDocument(userId: user.userId).setData(from: user, merge: false)
     }
     
+    func createNewUser(userId: String) async throws {
+        try userDocument(userId: userId).setData(from: userId, merge: false)
+    }
+    
     func getUser(userId: String) async throws -> DbUser {
         try await userDocument(userId: userId).getDocument(as: DbUser.self)
     }
