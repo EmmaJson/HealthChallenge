@@ -1,10 +1,3 @@
-//
-//  CreateChallengeView.swift
-//  HealthChallenge
-//
-//  Created by Emma Johansson on 2024-12-31.
-//
-
 import SwiftUI
 
 struct CreateChallengeView: View {
@@ -15,10 +8,36 @@ struct CreateChallengeView: View {
     @State private var challengeType = "Distance" // Default challenge type
     @State private var interval = "Daily"
     @State private var errorMessage: String? = nil
-    @State private var distanceOrStepsValue = 1 // Default value (e.g., 1 km or 1000 steps)
+    @State private var distanceOrStepsValue: Double = 1 // Default value (e.g., 1 km or 1000 steps)
 
     let challengeTypes = ["Distance", "Steps", "Calories"]
     let intervals = ["Daily", "Weekly", "Monthly"]
+
+    // Dynamic Label for the Slider
+    private var dynamicLabel: String {
+        switch (challengeType, interval) {
+        case ("Calories", "Daily"):
+            return "\((Int(distanceOrStepsValue) * 100).formatted()) kcal"
+        case ("Calories", "Weekly"):
+            return "\((Int(distanceOrStepsValue) * 1000).formatted()) kcal"
+        case ("Calories", "Monthly"):
+            return "\((Int(distanceOrStepsValue) * 10_000).formatted()) kcal"
+        case ("Distance", "Daily"):
+            return "\(Int(distanceOrStepsValue)) km"
+        case ("Distance", "Weekly"):
+            return "\((Int(distanceOrStepsValue) * 10).formatted()) km"
+        case ("Distance", "Monthly"):
+            return "\((Int(distanceOrStepsValue) * 100).formatted()) km"
+        case ("Steps", "Daily"):
+            return "\((Int(distanceOrStepsValue) * 1_000).formatted()) steps"
+        case ("Steps", "Weekly"):
+            return "\((Int(distanceOrStepsValue) * 10_000).formatted()) steps"
+        case ("Steps", "Monthly"):
+            return "\((Int(distanceOrStepsValue) * 100_000).formatted()) steps"
+        default:
+            return ""
+        }
+    }
 
     var body: some View {
         VStack(spacing: 20) {
@@ -28,7 +47,6 @@ struct CreateChallengeView: View {
             TextField("Description", text: $description)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
 
-            // Challenge Type Picker
             Picker("Challenge Type", selection: $challengeType) {
                 ForEach(challengeTypes, id: \.self) { type in
                     Text(type)
@@ -36,19 +54,19 @@ struct CreateChallengeView: View {
             }
             .pickerStyle(SegmentedPickerStyle())
 
-            // Conditional Input for Distance/Steps or Fixed Points
-            if challengeType == "Distance" || challengeType == "Steps" {
-                Stepper("\(distanceOrStepsValue) \(challengeType == "Distance" ? "km" : "000 steps")", value: $distanceOrStepsValue, in: 1...100)
-            } else if challengeType == "Calories" {
-                Stepper("\(distanceOrStepsValue)00 Kcal", value: $distanceOrStepsValue, in: 1...100)
-            }
-            
-            Picker("Challenge Type", selection: $interval) {
-                ForEach(intervals, id: \.self) { type in
-                    Text(type)
+            Picker("Interval", selection: $interval) {
+                ForEach(intervals, id: \.self) { interval in
+                    Text(interval)
                 }
             }
             .pickerStyle(SegmentedPickerStyle())
+
+            VStack {
+                Text(dynamicLabel)
+                    .font(.headline)
+                Slider(value: $distanceOrStepsValue, in: 0...40, step: 5)
+                    .accentColor(.blue)
+            }
 
             if let errorMessage = errorMessage {
                 Text(errorMessage)
@@ -71,22 +89,35 @@ struct CreateChallengeView: View {
         .navigationTitle("Create Challenge")
     }
 
-
     private func createChallenge() async {
         guard !title.isEmpty, !description.isEmpty else {
             errorMessage = "Please fill all fields."
             return
         }
 
-        // Calculate Points Based on Challenge Type
         let points: Int
-        switch challengeType {
-        case "Distance", "Steps":
-            points = distanceOrStepsValue
-        case "Calories":
-            points = distanceOrStepsValue
-        default:
-            points = 0
+        switch (challengeType, interval) {
+        case ("Calories", "Daily"):
+            points = Int(distanceOrStepsValue)
+        case ("Calories", "Weekly"):
+            points = Int(distanceOrStepsValue)
+        case ("Calories", "Monthly"):
+            points = Int(distanceOrStepsValue)
+
+        case ("Distance", "Daily"):
+            points = Int(distanceOrStepsValue)
+        case ("Distance", "Weekly"):
+            points = Int(distanceOrStepsValue)
+        case ("Distance", "Monthly"):
+            points = Int(distanceOrStepsValue)
+
+        case ("Steps", "Daily"):
+            points = Int(distanceOrStepsValue)
+        case ("Steps", "Weekly"):
+            points = Int(distanceOrStepsValue)
+        case ("Steps", "Monthly"):
+            points = Int(distanceOrStepsValue)
+        default: points = 0
         }
 
         do {
@@ -102,4 +133,8 @@ struct CreateChallengeView: View {
             errorMessage = "Failed to create challenge: \(error.localizedDescription)"
         }
     }
+}
+
+#Preview {
+    CreateChallengeView()
 }
