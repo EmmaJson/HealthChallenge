@@ -32,10 +32,6 @@ class LeaderboardViewModel {
         let top10: [LeaderboardUser]
     }
     
-    init() {
-        updateLeaderboard()
-    }
-    
     func updateLeaderboard() {
         Task {
             do {
@@ -46,6 +42,7 @@ class LeaderboardViewModel {
                     self.showAlert = false
                     self.leaderResult = result
                 }
+                Logger.log("Updating leaderboard")
             } catch {
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
@@ -75,6 +72,10 @@ class LeaderboardViewModel {
     
     private func postStepCountUpdateForUser() async throws {
         let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+        guard !userId.isEmpty else {
+            throw LeaderBoardViewModelError.unableTooFetchLoggedInUserId
+        }
+    
         guard let username = UserDefaults.standard.string(forKey: "username") else {
             throw LeaderBoardViewModelError.unableToFetchUsername
         }

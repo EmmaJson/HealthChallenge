@@ -10,15 +10,15 @@ import SwiftUI
 struct ProfileView: View {
     @State private var viewModel = ProfileViewModel()
     @Binding var showSignInView: Bool
-
+    
     var body: some View {
         VStack {
             HStack {
-                Image(viewModel.profileImage ?? "avatar 20")
+                Image(viewModel.profileImage)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 100, height: 100)
-                    .padding(.all, 8)
+                    .padding(8)
                     .onTapGesture {
                         withAnimation(.easeInOut(duration: 0.05)) {
                             viewModel.presentEditImage()
@@ -26,27 +26,58 @@ struct ProfileView: View {
                     }
                 
                 VStack(alignment: .leading) {
-                    Text("Good Morning, ")
+                    Text(viewModel.welcomeMessage)
                         .font(.title)
-                        .foregroundColor(.accent)
+                        .foregroundColor(.accentColor)
                     
-                    Text(viewModel.profileName ?? "Anonymous")
+                    Text(viewModel.profileName)
                         .font(.title2)
                 }
                 Spacer()
             }
-      
+            
             VStack {
+                editSection
                 
+                serviceSection
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .onAppear {
+            Task {await viewModel.fetchProfile()}
+            viewModel.determineTimeOfDay()
+        }
+        .alert("Ooops", isPresented: $viewModel.showAlert, actions: {
+            Button(role: .cancel) {
+                viewModel.showAlert = false
+            } label: {
+                Text("Ok")
+            }
+        }, message: {
+            Text("We were unable to open your mail application")
+        })
+        .navigationBarTitle("Profile")
+    }
+}
+
+#Preview {
+    NavigationStack {
+        ProfileView(showSignInView: .constant(false))
+    }
+}
+
+extension ProfileView {
+    private var editSection: some View {
+        Section {
+            VStack {
                 ProfileEditButton(image: "square.and.pencil", title: "Edit Profile Picture") {
                     withAnimation(.easeInOut(duration: 0.05)) {
                         viewModel.presentEditImage()
-
                     }
                 }
                 
                 if viewModel.isEditingProfilePicture {
-                   
                     VStack(spacing: 16) {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 16) {
@@ -73,15 +104,13 @@ struct ProfileView: View {
                             }
                             .padding(.horizontal)
                         }
-
+                        
                         HStack {
-                            
                             ProfileItemButton(title: "Cancel", color: Color.accent.opacity(0.5)) {
                                 withAnimation {
                                     viewModel.dismissEdit()
                                 }
                             }.foregroundColor(Color.theme.primaryText)
-                            
                             
                             ProfileItemButton(title: "Save changes", color: Color.colorBlue) {
                                 withAnimation {
@@ -93,7 +122,6 @@ struct ProfileView: View {
                     .transition(.scale)
                 }
                 
-                
                 ProfileEditButton(image: "square.and.pencil", title: "Edit Username") {
                     withAnimation(.easeInOut(duration: 0.05)) {
                         viewModel.presentEditName()
@@ -103,8 +131,7 @@ struct ProfileView: View {
                 if viewModel.isEditingName {
                     TextField("Name...", text: $viewModel.currentName)
                         .padding()
-                        .foregroundColor(Color.theme.accent.opacity(0.2))
-                        .background()
+                        .background(Color.gray.opacity(0.2))
                         .cornerRadius(10)
                         .padding(.horizontal)
                     HStack {
@@ -113,7 +140,6 @@ struct ProfileView: View {
                                 viewModel.dismissEdit()
                             }
                         }.foregroundColor(Color.theme.primaryText)
-                        
                         
                         ProfileItemButton(title: "Save changes", color: Color.colorBlue) {
                             if !viewModel.currentName.isEmpty {
@@ -126,13 +152,25 @@ struct ProfileView: View {
                     .padding()
                     .transition(.scale)
                 }
-                
             }
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(.accent.opacity(0.1))
+                    .fill(Color.accent.opacity(0.1))
             )
-            
+        } header: {
+            HStack() {
+                Text("EDIT PROFILE").opacity(0.8)
+                Spacer()
+            }
+            .padding(.leading)
+            .padding(.top)
+            .frame(maxWidth: .infinity)
+        }
+    }
+
+    
+    private var serviceSection: some View {
+        Section {
             VStack {
                 ProfileEditButton(image: "envelope", title: "Contact Us") {
                     viewModel.presentEmail()
@@ -157,32 +195,19 @@ struct ProfileView: View {
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                
             }
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(.accent.opacity(0.1))
+                    .fill(Color.accent.opacity(0.1))
             )
-            
-        }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .alert("Ooops", isPresented: $viewModel.showAlert, actions: {
-            Button(role: .cancel) {
-                viewModel.showAlert = false
-            } label: {
-                Text("Ok")
+        } header: {
+            HStack() {
+                Text("MANAGEMENT").opacity(0.8)
+                Spacer()
             }
-        }, message: {
-            Text("We were unable to open your mail application")
-        })
-        .navigationBarTitle("Profile")
-    }
-}
-
-
-#Preview {
-    NavigationStack {
-        ProfileView(showSignInView: .constant(false))
+            .padding(.leading)
+            .padding(.top)
+            .frame(maxWidth: .infinity)
+        }
     }
 }

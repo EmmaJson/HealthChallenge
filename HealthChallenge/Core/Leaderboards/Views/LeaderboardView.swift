@@ -100,6 +100,9 @@ struct LeaderboardView: View {
                 viewModel.updateLeaderboard()
             }
         }
+        .onAppear {
+            viewModel.updateLeaderboard()
+        }
         .refreshable {
             viewModel.updateLeaderboard()
         }

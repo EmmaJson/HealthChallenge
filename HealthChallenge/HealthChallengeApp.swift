@@ -70,7 +70,9 @@ struct HealthChallengeApp: App {
                             }
                         }
                         .task {
-                            await fetchProfile()
+                            if !showSignInView {
+                                await fetchProfile()
+                            }
                         }
                 }
                 
@@ -91,10 +93,13 @@ struct HealthChallengeApp: App {
         let userId = AuthenticationManager.shared.getAuthenticatedUserId()
         do {
             if let profile = try await UserManager.shared.getUserProfile(userId: userId) {
+                print("Profile fetched: \(profile)")
                 DispatchQueue.main.async {
                     username = profile.username
                     avatar = profile.avatar
                 }
+            } else {
+                print("No profile data found for user \(userId)")
             }
         } catch {
             print("Failed to fetch profile: \(error.localizedDescription)")

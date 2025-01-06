@@ -45,7 +45,7 @@ struct HomeTabView: View {
         }
         .tint(.accent)
         .onAppear {
-            showTermsView = username == nil
+            showTermsView = username == "[Set a Name]"
         }
     }
 }
@@ -53,3 +53,4 @@ struct HomeTabView: View {
 #Preview {
     HomeTabView(showSignInView: .constant(false))
 }
+

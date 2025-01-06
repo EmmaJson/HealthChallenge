@@ -8,16 +8,6 @@
 import Foundation
 import FirebaseFirestore
 
-struct Challenge: Codable, Identifiable {
-    let id: String
-    let title: String
-    let description: String
-    let points: Int
-    let type: String
-    let interval: String
-    let createdDate = Date()
-}
-
 final class ChallengeManager {
     
     static let shared = ChallengeManager()

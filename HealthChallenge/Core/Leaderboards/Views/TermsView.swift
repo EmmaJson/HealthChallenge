@@ -9,10 +9,9 @@ import SwiftUI
 
 struct TermsView: View {
     @AppStorage("username") var username: String?
-
+    @State var viewModel = ProfileViewModel()
     @Binding var showTerms: Bool
     
-    @State var name = ""
     @State var acceptTerms = false
 
     var body: some View {
@@ -24,7 +23,7 @@ struct TermsView: View {
                 .padding()
                 .padding(.bottom, 10)
                         
-            TextField("Displayed username...", text: $name)
+            TextField("Displayed username...", text: $viewModel.currentName)
                 .padding()
                 .background(Color.theme.accent.opacity(0.2))
                 .cornerRadius(10)
@@ -46,8 +45,8 @@ struct TermsView: View {
             .padding(.vertical)
             
             Button {
-                if acceptTerms && name.count > 3 {
-                    username = name
+                if acceptTerms && viewModel.currentName.count > 3 {
+                    viewModel.setNewName()
                     showTerms = false
                 }
             } label: {

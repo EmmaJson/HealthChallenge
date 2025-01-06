@@ -14,9 +14,10 @@ final class ProfileViewModel {
     var showAlert = false
     var isEditingName = false
     var isEditingProfilePicture = false
+    var welcomeMessage: String = "Good Morning"
     
     var currentName = ""
-    var profileName = UserDefaults.standard.string(forKey: "username") ?? "Set a Name"
+    var profileName = UserDefaults.standard.string(forKey: "username") ?? "[Set a Name]"
 
     var selectedImage: String = UserDefaults.standard.string(forKey: "avatar") ?? ""
     var profileImage: String = UserDefaults.standard.string(forKey: "avatar") ?? "no avatar"
@@ -25,12 +26,14 @@ final class ProfileViewModel {
     ]
     
     init() {
+        determineTimeOfDay()
         Task {
             await fetchProfile()
         }
     }
     
     func presentEditName() {
+        currentName = ""
         isEditingProfilePicture = false
         isEditingName.toggle()
     }
@@ -53,7 +56,7 @@ final class ProfileViewModel {
             try await Task.sleep(nanoseconds: 200_000_000)
             await self.saveProfile()
         }
-        
+        currentName = ""
         self.dismissEdit()
     }
     
@@ -119,14 +122,11 @@ extension ProfileViewModel {
         let userId = AuthenticationManager.shared.getAuthenticatedUserId()
         do {
             if let profile = try await UserManager.shared.getUserProfile(userId: userId) {
-                // Update ViewModel properties
                 DispatchQueue.main.async {
-                    self.currentName = profile.username
                     self.profileName = profile.username
                     self.selectedImage = profile.avatar
                     self.profileImage = profile.avatar
                     
-                    // Save to UserDefaults for persistence
                     UserDefaults.standard.set(profile.username, forKey: "username")
                     UserDefaults.standard.set(profile.avatar, forKey: "avatar")
                 }
@@ -135,6 +135,23 @@ extension ProfileViewModel {
             }
         } catch {
             print("Failed to fetch profile data: \(error.localizedDescription)")
+        }
+    }
+}
+
+extension ProfileViewModel {
+    func determineTimeOfDay() {
+        let hour = Calendar.current.component(.hour, from: Date())
+        
+        switch hour {
+        case 5..<12:
+            welcomeMessage = "Good Morning,"
+        case 12..<17:
+            welcomeMessage = "Good Day,"
+        case 17..<21:
+            welcomeMessage = "Good Evening,"
+        default:
+            welcomeMessage = "Good Night,"
         }
     }
 }
