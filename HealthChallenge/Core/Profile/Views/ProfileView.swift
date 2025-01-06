@@ -80,14 +80,14 @@ struct ProfileView: View {
                                 withAnimation {
                                     viewModel.dismissEdit()
                                 }
-                            }.foregroundColor(Color.white)
+                            }.foregroundColor(Color.theme.primaryText)
                             
                             
                             ProfileItemButton(title: "Save changes", color: Color.colorBlue) {
                                 withAnimation {
                                     viewModel.setNewImage()
                                 }
-                            }.foregroundColor(Color.white)
+                            }.foregroundColor(Color.theme.primaryText)
                         }
                     }
                     .transition(.scale)
@@ -103,7 +103,7 @@ struct ProfileView: View {
                 if viewModel.isEditingName {
                     TextField("Name...", text: $viewModel.currentName)
                         .padding()
-                        .foregroundColor(Color.gray)
+                        .foregroundColor(Color.theme.accent.opacity(0.2))
                         .background()
                         .cornerRadius(10)
                         .padding(.horizontal)
@@ -112,7 +112,7 @@ struct ProfileView: View {
                             withAnimation {
                                 viewModel.dismissEdit()
                             }
-                        }.foregroundColor(Color.white)
+                        }.foregroundColor(Color.theme.primaryText)
                         
                         
                         ProfileItemButton(title: "Save changes", color: Color.colorBlue) {
@@ -121,7 +121,7 @@ struct ProfileView: View {
                                     viewModel.setNewName()
                                 }
                             }
-                        }.foregroundColor(Color.white)
+                        }.foregroundColor(Color.theme.primaryText)
                     }
                     .padding()
                     .transition(.scale)

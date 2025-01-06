@@ -16,10 +16,10 @@ struct ChallengesView: View {
                 ProgressView("Loading Challenges...")
             } else if let errorMessage = viewModel.errorMessage {
                 Text(errorMessage)
-                    .foregroundColor(.red)
+                    .foregroundColor(Color.theme.colorRed)
             } else if viewModel.challenges.isEmpty {
                 Text("No challenges available.")
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.theme.secondaryText)
             } else {
                 List {
                     // Define the custom order
@@ -41,11 +41,11 @@ struct ChallengesView: View {
                                         HStack(alignment: .center, spacing: 10) {
                                             if viewModel.isChallengeActive(challenge.id) {
                                                 Image(systemName: "checkmark.circle.fill")
-                                                    .foregroundColor(.green)
+                                                    .foregroundColor(Color.theme.colorGreen)
                                                     .font(.title3)
                                             } else {
                                                 Image(systemName: "circle")
-                                                    .foregroundColor(.gray)
+                                                    .foregroundColor(Color.theme.secondaryText)
                                                     .font(.title3)
                                             }
                                             
@@ -57,12 +57,12 @@ struct ChallengesView: View {
                                                     Spacer()
                                                     Text("\(challenge.points) pts")
                                                         .font(.subheadline)
-                                                        .foregroundColor(.blue)
+                                                        .foregroundColor(Color.theme.colorBlue)
                                                 }
                                                 
                                                 Text(challenge.description)
                                                     .font(.body)
-                                                    .foregroundColor(.gray)
+                                                    .foregroundColor(Color.theme.secondaryText)
                                             }
                                             .padding(.vertical, 5)
                                         }
@@ -77,7 +77,7 @@ struct ChallengesView: View {
             NavigationLink(destination: CreateChallengeView()) {
                 Text("Create a Challenge")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.theme.primaryText)
                     .frame(height: 55)
                     .frame(maxWidth: .infinity)
                     .background(Color.orange)

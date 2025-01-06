@@ -48,7 +48,7 @@ struct LeaderboardView: View {
                                 
                                 if username == person.username {
                                     Image(systemName: "crown.fill")
-                                        .foregroundColor(.yellow)
+                                        .foregroundColor(Color.theme.colorYellow)
                                 }
                                 
                                 Spacer()
@@ -64,7 +64,7 @@ struct LeaderboardView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: 48, height: 48)
-                            .foregroundColor(.gray.opacity(0.5))
+                            .foregroundColor(Color.theme.accent.opacity(0.2))
                         
                         HStack {
                             Text(user.username)

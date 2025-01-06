@@ -52,7 +52,7 @@ struct CreateChallengeView: View {
 
             if let errorMessage = errorMessage {
                 Text(errorMessage)
-                    .foregroundColor(.red)
+                    .foregroundColor(Color.theme.colorRed)
             }
 
             Button("Create Challenge") {
@@ -63,8 +63,8 @@ struct CreateChallengeView: View {
                 }
             }
             .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
+            .background(Color.theme.colorBlue)
+            .foregroundColor(Color.theme.primaryText)
             .cornerRadius(8)
         }
         .padding()

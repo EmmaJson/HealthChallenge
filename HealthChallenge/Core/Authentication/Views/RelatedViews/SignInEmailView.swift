@@ -19,11 +19,11 @@ struct SignInEmailView: View {
         VStack {
             TextField("Email...", text: $viewModel.email)
                 .padding()
-                .background(Color.gray.opacity(0.4))
+                .background(Color.theme.accent.opacity(0.2))
                 .cornerRadius(10)
             SecureField("Password...", text: $viewModel.password)
                 .padding()
-                .background(Color.gray.opacity(0.4))
+                .background(Color.theme.accent.opacity(0.2))
                 .cornerRadius(10)
             
             Button{
@@ -42,7 +42,7 @@ struct SignInEmailView: View {
             } label: {
                 Text("Sign In")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.theme.primaryText)
                     .frame(height:55)
                     .frame(maxWidth: . infinity)
                     .background(Color.colorBlue)
@@ -51,14 +51,14 @@ struct SignInEmailView: View {
             
             if pressedButton {
                 Text("Sign in Successful!")
-                    .foregroundColor(.green)
+                    .foregroundColor(Color.theme.colorGreen)
                     .font(.headline)
                     .padding(.bottom)
             }
             
             if errorMessage {
                 Text("Wrong Email or Password")
-                    .foregroundColor(.red)
+                    .foregroundColor(Color.theme.colorRed)
                     .font(.subheadline)
                     .padding(.bottom)
             }

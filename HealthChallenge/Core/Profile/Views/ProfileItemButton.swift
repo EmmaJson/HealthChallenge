@@ -20,7 +20,7 @@ struct ProfileItemButton: View {
                 .padding()
                 .bold()
                 .frame(maxWidth: 200)
-                .foregroundColor(Color.white)
+                .foregroundColor(Color.theme.primaryText)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
                         .fill(color)
@@ -30,5 +30,5 @@ struct ProfileItemButton: View {
 }
 
 #Preview {
-    ProfileItemButton(title: "Test", color: .blue) {}
+    ProfileItemButton(title: "Test", color: Color.theme.colorBlue) {}
 }

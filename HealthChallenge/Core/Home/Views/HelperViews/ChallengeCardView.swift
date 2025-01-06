@@ -18,7 +18,7 @@ struct ChallengeCardView: View {
                 .frame(width: 48, height: 48)
                 .foregroundColor(challenge.tintColor)
                 .padding()
-                .background(.gray.opacity(0.2))
+                .background(Color.theme.accent.opacity(0.2))
                 .cornerRadius(10)
             
             VStack(spacing: 16) {

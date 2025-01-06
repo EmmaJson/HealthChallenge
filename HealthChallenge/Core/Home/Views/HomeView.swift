@@ -26,21 +26,21 @@ struct HomeView: View {
                             Text("Calories")
                                 .font(.callout)
                                 .bold()
-                                .foregroundColor(.red)
+                                .foregroundColor(Color.theme.colorRed)
                             Text("\(viewModel.calories)")
                                 .bold()
                             
                             Text("Steps")
                                 .font(.callout)
                                 .bold()
-                                .foregroundColor(.green)
+                                .foregroundColor(Color.theme.colorGreen)
                             Text("\(viewModel.steps)")
                                 .bold()
                             
                             Text("Distance")
                                 .font(.callout)
                                 .bold()
-                                .foregroundColor(.blue)
+                                .foregroundColor(Color.theme.colorBlue)
                             Text("\(viewModel.distanceString)")
                                 .bold()
                             
@@ -58,16 +58,16 @@ struct HomeView: View {
                                 Text("[ Tap to set goals ]")
                                     .font(.title)
                                     .bold()
-                                ProgressCircleView(progress: $viewModel.calories, goal: 1000, color: .red)
-                                ProgressCircleView(progress: $viewModel.steps, goal: 1000000, color: .green)
+                                ProgressCircleView(progress: $viewModel.calories, goal: 1000, color: Color.theme.colorRed)
+                                ProgressCircleView(progress: $viewModel.steps, goal: 1000000, color: Color.theme.colorGreen)
                                     .padding(.all, 20)
-                                ProgressCircleView(progress: $viewModel.distance, goal: 10000, color: .blue)
+                                ProgressCircleView(progress: $viewModel.distance, goal: 10000, color: Color.theme.colorBlue)
                                     .padding(.all, 40)
                             } else {
-                                ProgressCircleView(progress: $viewModel.calories, goal: Int(viewModel.calorieGoal), color: .red)
-                                ProgressCircleView(progress: $viewModel.steps, goal: Int(viewModel.stepGoal), color: .green)
+                                ProgressCircleView(progress: $viewModel.calories, goal: Int(viewModel.calorieGoal), color: Color.theme.colorRed)
+                                ProgressCircleView(progress: $viewModel.steps, goal: Int(viewModel.stepGoal), color: Color.theme.colorGreen)
                                     .padding(.all, 20)
-                                ProgressCircleView(progress: $viewModel.distance, goal: Int(viewModel.distanceGoal), color: .blue)
+                                ProgressCircleView(progress: $viewModel.distance, goal: Int(viewModel.distanceGoal), color: Color.theme.colorBlue)
                                     .padding(.all, 40)
                             }
                         }
@@ -86,21 +86,21 @@ struct HomeView: View {
                             .padding(.top)
                         
                         VStack {
-                            SliderView(title: "Calories Goal: ", unit: "kcal" , sliderValue: $viewModel.currentCalorieGoal, start: 100, stop: 2000, color: .red)
+                            SliderView(title: "Calories Goal: ", unit: "kcal" , sliderValue: $viewModel.currentCalorieGoal, start: 100, stop: 2000, color: Color.theme.colorRed)
                             
-                            SliderView(title: "Step Goal: ", unit: "" , sliderValue: $viewModel.currentStepGoal, start: 1000, stop: 20000, color: .green)
+                            SliderView(title: "Step Goal: ", unit: "" , sliderValue: $viewModel.currentStepGoal, start: 1000, stop: 20000, color: Color.theme.colorGreen)
                             
-                            SliderView(title: "Distance Goal: ", unit: "km" , sliderValue: $viewModel.currentDistanceGoal, start: 1, stop: 20, color: .blue)
+                            SliderView(title: "Distance Goal: ", unit: "km" , sliderValue: $viewModel.currentDistanceGoal, start: 1, stop: 20, color: Color.theme.colorBlue)
                         }
                         .padding()
                         
                         HStack {
-                            ProfileItemButton(title: "Cancel", color: Color.accent.opacity(0.5)) {
+                            ProfileItemButton(title: "Cancel", color: Color.theme.accent.opacity(0.5)) {
                                 withAnimation {
                                     viewModel.toggleEditor()
                                 }
                             }
-                            ProfileItemButton(title: "Save changes", color: Color.colorBlue) {
+                            ProfileItemButton(title: "Save changes", color: Color.theme.colorBlue) {
                                 withAnimation {
                                     viewModel.setCurrentGoals()
                                     viewModel.toggleEditor()
@@ -118,6 +118,7 @@ struct HomeView: View {
                 HStack {
                     Text("Activity")
                         .font(.title2)
+                        .bold()
                     
                     Spacer()
                 }
@@ -132,10 +133,10 @@ struct HomeView: View {
                     .padding(.horizontal)
                 }
                 
-                
                 HStack {
                     Text("Active Challenges")
                         .font(.title2)
+                        .bold()
                     
                     Spacer()
                 }
@@ -156,22 +157,22 @@ struct HomeView: View {
                             Image(systemName: "exclamationmark.circle")
                                 .resizable()
                                 .frame(width: 50, height: 50)
-                                .foregroundColor(.gray.opacity(0.7))
+                                .foregroundColor(Color.theme.secondaryText.opacity(0.8))
                             
                             Text("No Active Challenges")
                                 .font(.title2)
                                 .bold()
-                                .foregroundColor(.primary.opacity(0.8))
+                                .foregroundColor(Color.theme.secondaryText.opacity(0.8))
                             
                             Text("Join a challenge to get started!")
                                 .font(.body)
                                 .multilineTextAlignment(.center)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(Color.theme.secondaryText.opacity(0.6))
                         }
                         .padding()
                         .background(
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(Color.gray.opacity(0.1))
+                                .fill(Color.theme.secondaryText.opacity(0.1))
                                 .shadow(radius: 5)
                         )
                         .padding()
@@ -184,6 +185,7 @@ struct HomeView: View {
                 HStack {
                     Text("Past Challenges")
                         .font(.title2)
+                        .bold()
                     
                     Spacer()
                 }
@@ -193,7 +195,7 @@ struct HomeView: View {
                 if !viewModel.completedChallenges.isEmpty {
                     LazyVGrid(columns: Array(repeating: GridItem(spacing: 10), count: 1)) {
                         ForEach(viewModel.completedChallenges, id: \.finishedChallengeId) { pastChallenge in
-                            ChallengeCardView(challenge: ChallengeCard(challenge: pastChallenge.challenge, image: "trophy.fill", tintColor: Color.yellow))
+                            ChallengeCardView(challenge: ChallengeCard(challenge: pastChallenge.challenge, image: "trophy.fill", tintColor: Color.theme.colorYellow))
                         }
                     }
                     .padding(.bottom)
@@ -204,22 +206,22 @@ struct HomeView: View {
                             Image(systemName: "exclamationmark.circle")
                                 .resizable()
                                 .frame(width: 50, height: 50)
-                                .foregroundColor(.gray.opacity(0.7))
+                                .foregroundColor(Color.theme.secondaryText.opacity(0.8))
                             
                             Text("No Finished Challenges")
                                 .font(.title2)
                                 .bold()
-                                .foregroundColor(.primary.opacity(0.8))
+                                .foregroundColor(Color.theme.secondaryText.opacity(0.8))
                             
                             Text("Join a challenge to get started!")
                                 .font(.body)
                                 .multilineTextAlignment(.center)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(Color.theme.secondaryText.opacity(0.6))
                         }
                         .padding()
                         .background(
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(Color.gray.opacity(0.1))
+                                .fill(Color.theme.secondaryText.opacity(0.1))
                                 .shadow(radius: 5)
                         )
                         .padding()

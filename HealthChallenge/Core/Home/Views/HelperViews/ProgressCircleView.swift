@@ -29,5 +29,5 @@ struct ProgressCircleView: View {
 }
 
 #Preview {
-    ProgressCircleView(progress: .constant(100), goal: 200, color: .red)
+    ProgressCircleView(progress: .constant(100), goal: 200, color: Color.theme.colorRed)
 }

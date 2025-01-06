@@ -17,7 +17,7 @@ struct ResetPasswordView: View {
         VStack {
             TextField("Email...", text: $viewModel.email)
                 .padding()
-                .background(Color.gray.opacity(0.4))
+                .background(Color.theme.accent.opacity(0.2))
                 .cornerRadius(10)
             
             Button{
@@ -35,7 +35,7 @@ struct ResetPasswordView: View {
             } label: {
                 Text("Send reset link")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.theme.primaryText)
                     .frame(height:55)
                     .frame(maxWidth: . infinity)
                     .background(Color.colorBlue)
@@ -44,14 +44,14 @@ struct ResetPasswordView: View {
             
             if pressedButton {
                 Text("Password Reset Link Sent!")
-                    .foregroundColor(.green)
+                    .foregroundColor(Color.theme.colorGreen)
                     .font(.headline)
                     .padding(.bottom)
             }
             
             if let errorMessage = errorMessage {
                 Text(errorMessage)
-                    .foregroundColor(.red)
+                    .foregroundColor(Color.theme.colorRed)
                     .font(.subheadline)
                     .padding(.bottom)
             }

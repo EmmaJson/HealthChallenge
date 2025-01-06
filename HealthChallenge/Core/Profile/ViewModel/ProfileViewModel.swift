@@ -19,7 +19,7 @@ final class ProfileViewModel {
     var profileName = UserDefaults.standard.string(forKey: "username") ?? "Set a Name"
 
     var selectedImage: String = UserDefaults.standard.string(forKey: "avatar") ?? ""
-    var profileImage: String = UserDefaults.standard.string(forKey: "avatar") ?? "avatar 20"
+    var profileImage: String = UserDefaults.standard.string(forKey: "avatar") ?? "no avatar"
     
     var images = ["avatar 1", "avatar 2", "avatar 3", "avatar 4", "avatar 5", "avatar 6", "avatar 7", "avatar 8", "avatar 9", "avatar 10", "avatar 11", "avatar 12", "avatar 13", "avatar 14", "avatar 15", "avatar 16", "avatar 17", "avatar 18", "avatar 19", "avatar 20"
     ]

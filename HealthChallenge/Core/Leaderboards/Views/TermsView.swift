@@ -26,7 +26,7 @@ struct TermsView: View {
                         
             TextField("Displayed username...", text: $name)
                 .padding()
-                .background(Color.gray.opacity(0.4))
+                .background(Color.theme.accent.opacity(0.2))
                 .cornerRadius(10)
                             
             HStack(alignment: .top) {
@@ -53,7 +53,7 @@ struct TermsView: View {
             } label: {
                 Text("Continue")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.theme.primaryText)
                     .frame(height: 55)
                     .frame(maxWidth: .infinity)
                     .background(Color.colorBlue)

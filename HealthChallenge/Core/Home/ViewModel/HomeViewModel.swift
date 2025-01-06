@@ -93,7 +93,7 @@ class HomeViewModel {
         Logger.info("Fetching today’s calories")
         healthManager.fetchTodayCaloriesBurned { [weak self] result in
             guard let self else { return }
-            self.handleFetchResult(result, title: "Calories", subtitle: "Today", image: "flame", tintColor: .red) { value in
+            self.handleFetchResult(result, title: "Calories", subtitle: "Today", image: "flame", tintColor: Color.theme.colorRed) { value in
                 self.calories = Int(value)
                 return value.formattedNumberString()
             }
@@ -104,7 +104,7 @@ class HomeViewModel {
         Logger.info("Fetching today’s steps")
         healthManager.fetchTodaySteps { [weak self] result in
             guard let self else { return }
-            self.handleFetchResult(result, title: "Steps", subtitle: "Today", image: "shoeprints.fill", tintColor: .green) { value in
+            self.handleFetchResult(result, title: "Steps", subtitle: "Today", image: "shoeprints.fill", tintColor: Color.theme.colorGreen) { value in
                 self.steps = Int(value)
                 return value.formattedNumberString()
             }
@@ -115,7 +115,7 @@ class HomeViewModel {
         Logger.info("Fetching today’s distance")
         healthManager.fetchTodayDistance { [weak self] result in
             guard let self else { return }
-            self.handleFetchResult(result, title: "Distance", subtitle: "Today", image: "figure.walk", tintColor: .blue) { value in
+            self.handleFetchResult(result, title: "Distance", subtitle: "Today", image: "figure.walk", tintColor: Color.theme.colorBlue) { value in
                 self.distanceString = String(format: "%.1f km", value)
                 self.distance = Int(value)
                 return self.distanceString
@@ -127,7 +127,7 @@ class HomeViewModel {
         Logger.info("Fetching today’s caloric intake")
         healthManager.fetchTodayCalorieIntake { [weak self] result in
             guard let self else { return }
-            self.handleFetchResult(result, title: "Caloric Intake", subtitle: "Today", image: "fork.knife", tintColor: .teal) { value in
+            self.handleFetchResult(result, title: "Caloric Intake", subtitle: "Today", image: "fork.knife", tintColor: Color.theme.colorTeal) { value in
                 return value.formattedNumberString()
             }
         }
@@ -137,7 +137,7 @@ class HomeViewModel {
         Logger.info("Fetching today’s HR")
         healthManager.fetchTodayHeartRate { [weak self] result in
             guard let self else { return }
-            self.handleFetchResult(result, title: "Heart Rate", subtitle: "Today", image: "heart.fill", tintColor: .pink) { value in
+            self.handleFetchResult(result, title: "Heart Rate", subtitle: "Today", image: "heart.fill", tintColor: Color.theme.colorPink) { value in
                 return value.formattedNumberString()
             }
         }
@@ -147,7 +147,7 @@ class HomeViewModel {
         Logger.info("Fetching today’s active minutes")
         healthManager.fetchTodayActiveMinutes { [weak self] result in
             guard let self else { return }
-            self.handleFetchResult(result, title: "Active", subtitle: "Today", image: "figure.run", tintColor: .yellow) { value in
+            self.handleFetchResult(result, title: "Active", subtitle: "Today", image: "figure.run", tintColor: Color.theme.colorYellow) { value in
                 return "\(value.formattedNumberString()) min"
             }
         }
@@ -284,13 +284,13 @@ extension HomeViewModel {
             let (image, tintColor): (String, Color)
             switch challenge.type {
             case "Distance":
-                (image, tintColor) = ("figure.walk", Color.blue)
+                (image, tintColor) = ("figure.walk", Color.theme.colorBlue)
             case "Steps":
-                (image, tintColor) = ("shoeprints.fill", Color.green)
+                (image, tintColor) = ("shoeprints.fill", Color.theme.colorGreen)
             case "Calories":
-                (image, tintColor) = ("flame", Color.red)
+                (image, tintColor) = ("flame", Color.theme.colorRed)
             default:
-                (image, tintColor) = ("questionmark.circle", Color.gray)
+                (image, tintColor) = ("questionmark.circle", Color.theme.secondaryText)
             }
             let card = ChallengeCard(challenge: challenge, image: image, tintColor: tintColor)
             self.challenges.append(card)

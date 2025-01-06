@@ -13,56 +13,91 @@ import FirebaseAuth
 
 @main
 struct HealthChallengeApp: App {
+    @AppStorage("username") var username: String?
+    @AppStorage("avatar") var avatar: String?
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @Environment(\.scenePhase) var scenePhase
     @State private var showSignInView: Bool = false
-
+    @State private var showLaunchView: Bool = true
+    
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                HomeTabView(showSignInView: $showSignInView)
-                    .toolbar {
-                        /*
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button("Test Notification") {
-                                scheduleTestNotification()
+            ZStack {
+                //MARK: NAVSTACK-
+                NavigationStack {
+                    HomeTabView(showSignInView: $showSignInView)
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                NavigationLink {
+                                    ProfileView(showSignInView: $showSignInView)
+                                } label: {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.accent)
+                                            .frame(width: 26, height: 26)
+                                        
+                                        Image(avatar ?? "no avatar")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 24, height: 24)
+                                            .clipShape(Circle())
+                                    }
+                                }
+                            }
+                            
+                            ToolbarItem(placement: .topBarTrailing) {
+                                NavigationLink {
+                                    SettingsView(showSignInView: $showSignInView)
+                                } label: {
+                                    Image(systemName: "gear")
+                                        .font(.headline)
+                                }
                             }
                         }
-                         */
-                        
-                        ToolbarItem(placement: .topBarLeading) {
-                            NavigationLink {
-                                ProfileView(showSignInView: $showSignInView)
-                            } label: {
-                                Image(systemName: "person.circle.fill")
-                                    .font(.headline)
+                        .toolbarBackground(Color.background.opacity(0.1), for: .navigationBar)
+                        .onChange(of: scenePhase) { newPhase in
+                            switch newPhase {
+                            case .background:
+                                print("App moved to background.")
+                            case .active:
+                                print("App moved to foreground.")
+                                let userId = Auth.auth().currentUser?.uid
+                                if let userId = userId {
+                                    UserManager.shared.resumeListeners(for: userId)
+                                }
+                            default:
+                                break
                             }
                         }
-                        ToolbarItem(placement: .topBarTrailing) {
-                            NavigationLink {
-                                SettingsView(showSignInView: $showSignInView)
-                            } label: {
-                                Image(systemName: "gear")
-                                    .font(.headline)
-                            }
+                        .task {
+                            await fetchProfile()
                         }
+                }
+                
+                //MARK: NAVSTACK end-
+                ZStack {
+                    if showLaunchView {
+                        LaunchView(showLaunchView: $showLaunchView)
+                            .transition(.move(edge: .leading))
+                            .animation(.easeInOut(duration: 0.6), value: showLaunchView)
                     }
-                    .toolbarBackground(Color.background.opacity(0.1), for: .navigationBar)
-                    .onChange(of: scenePhase) { newPhase in
-                        switch newPhase {
-                        case .background:
-                            print("App moved to background.")
-                        case .active:
-                            print("App moved to foreground.")
-                            let userId = Auth.auth().currentUser?.uid
-                            if let userId = userId {
-                                UserManager.shared.resumeListeners(for: userId)
-                            }
-                        default:
-                            break
-                        }
-                    }
+                }
+                .zIndex(2.0)
             }
+        }
+    }
+    
+    func fetchProfile() async {
+        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+        do {
+            if let profile = try await UserManager.shared.getUserProfile(userId: userId) {
+                DispatchQueue.main.async {
+                    username = profile.username
+                    avatar = profile.avatar
+                }
+            }
+        } catch {
+            print("Failed to fetch profile: \(error.localizedDescription)")
         }
     }
     
@@ -71,13 +106,13 @@ struct HealthChallengeApp: App {
         content.title = "Test Notification"
         content.body = "This is a test notification for the HealthChallenge app."
         content.sound = .default
-
+        
         let request = UNNotificationRequest(
             identifier: UUID().uuidString,
             content: content,
             trigger: nil
         )
-
+        
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 print("Error sending test notification: \(error)")
