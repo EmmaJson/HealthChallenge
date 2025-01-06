@@ -169,21 +169,75 @@ extension HealthKitManager {
 
 // MARK: LeaderboardView
 extension HealthKitManager {
-    func fetchCurrentWeekStepCount(completion: @escaping (Result<Double,Error>) -> Void) {
-        let steps = HKQuantityType(.stepCount)
-        let predicate = HKQuery.predicateForSamples(withStart: Date().fetchPreviousMonday(), end: Date())
-        let query = HKStatisticsQuery(quantityType: steps, quantitySamplePredicate: predicate) { _, results, error in
-            guard let quantity = results?.sumQuantity(), error == nil else {
-                completion(.failure(NSError()))
+    func fetchCurrentWeekData(
+        for quantityType: HKQuantityTypeIdentifier,
+        unit: HKUnit,
+        completion: @escaping (Result<Double, Error>) -> Void
+    ) {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            let healthKitUnavailableError = NSError(
+                domain: "HealthKitError",
+                code: 0,
+                userInfo: [NSLocalizedDescriptionKey: "HealthKit is not available on this device."]
+            )
+            completion(.failure(healthKitUnavailableError))
+            return
+        }
+        
+        guard let quantity = HKQuantityType.quantityType(forIdentifier: quantityType) else {
+            let invalidTypeError = NSError(
+                domain: "HealthKitError",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "Invalid HealthKit quantity type."]
+            )
+            completion(.failure(invalidTypeError))
+            return
+        }
+        
+        let monday = Date().fetchPreviousMonday()
+        let startDate = Date.startOfDay(for: monday)
+        let endDate = Date()
+        print("[DEBUG] Query range: \(startDate) to \(endDate)")
+        
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictEndDate)
+        
+        let query = HKStatisticsQuery(quantityType: quantity, quantitySamplePredicate: predicate) { _, results, error in
+            if let error = error {
+                print("[DEBUG] HealthKit query failed: \(error.localizedDescription)")
+                completion(.failure(error))
                 return
             }
             
-            let stepsCount = quantity.doubleValue(for: .count())
-            completion(.success(stepsCount))
+            guard let quantity = results?.sumQuantity() else {
+                print("[DEBUG] No data found for range \(startDate) to \(endDate).")
+                let noDataError = NSError(
+                    domain: "HealthKitError",
+                    code: 11,
+                    userInfo: [NSLocalizedDescriptionKey: "No data available for the specified predicate."]
+                )
+                completion(.failure(noDataError))
+                return
+            }
+            
+            let value = quantity.doubleValue(for: unit)
+            print("[DEBUG] Successfully fetched data: \(value) \(unit)")
+            completion(.success(value))
         }
+        
         healthStore.execute(query)
     }
-    
+
+    func fetchCurrentWeekStepCount(completion: @escaping (Result<Double, Error>) -> Void) {
+        fetchCurrentWeekData(for: .stepCount, unit: HKUnit.count(), completion: completion)
+    }
+
+    func fetchCurrentWeekCalories(completion: @escaping (Result<Double, Error>) -> Void) {
+        fetchCurrentWeekData(for: .activeEnergyBurned, unit: HKUnit.kilocalorie(), completion: completion)
+    }
+
+    func fetchCurrentWeekDistance(completion: @escaping (Result<Double, Error>) -> Void) {
+        fetchCurrentWeekData(for: .distanceWalkingRunning, unit: HKUnit.meterUnit(with: .kilo), completion: completion)
+    }
 }
 
 // MARK: Fetch data for charts

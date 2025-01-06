@@ -26,11 +26,66 @@ struct LeaderboardView: View {
         ScrollView(showsIndicators: false) {
             ZStack {
                 VStack {
-                    Text("Leaderboard")
+                    Text("Leaderboards")
                         .font(.largeTitle)
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding()
+                    
+                    HStack {
+                        Spacer()
+
+                        Button {
+                            withAnimation {
+                                viewModel.moveLeft()
+                            }
+                        } label: {
+                            ZStack {
+                                Image(systemName: "arrow.left")
+                                    .resizable()
+                                    .frame(width: 18, height: 18)
+                                    .foregroundColor(Color.theme.onBackground)
+                                    .zIndex(2)
+                                Circle()
+                                    .frame(width: 34, height: 34)
+                                    .background(Color.theme.background)
+                                    .foregroundStyle(Color.theme.background)
+                                    .clipShape(Circle.circle)
+                                    .shadow(color: Color.theme.onBackground .opacity(0.5),radius: 5)
+                                    .zIndex(1)
+                            }
+                        }
+                        Spacer()
+                        
+                        Text(viewModel.leaderboardtype.rawValue.uppercased(with: .autoupdatingCurrent))
+                            .font(.headline)
+                            .bold()
+                        
+                        Spacer()
+                        
+                        Button {
+                            withAnimation {
+                                viewModel.moveRight()
+                            }
+                        } label: {
+                            ZStack {
+                                Image(systemName: "arrow.right")
+                                    .resizable()
+                                    .frame(width: 18, height: 18)
+                                    .foregroundColor(Color.theme.onBackground)
+                                    .zIndex(2)
+                                Circle()
+                                    .frame(width: 34, height: 34)
+                                    .background(Color.theme.background)
+                                    .foregroundStyle(Color.theme.background)
+                                    .clipShape(Circle.circle)
+                                    .shadow(color: Color.theme.onBackground .opacity(0.5),radius: 5)
+                                    .zIndex(1)
+                            }
+                        }
+                        Spacer()
+                    }
+                    .padding(.horizontal)
                     
                     HStack {
                         Text("Name")
@@ -38,7 +93,7 @@ struct LeaderboardView: View {
                         
                         Spacer()
                         
-                        Text("Steps")
+                        Text("Count")
                             .bold()
                     }
                     .padding()
@@ -59,7 +114,12 @@ struct LeaderboardView: View {
                                 
                                 Spacer()
                                 
-                                Text("\(person.steps)") // Ensure this matches the leaderboard type
+                                switch viewModel.leaderboardtype {
+                                case .points: Text("\(person.points)")
+                                case .calories: Text("\(person.calories)")
+                                case .steps: Text("\(person.steps)")
+                                case .distance: Text("\(person.distance)")
+                                }
                             }
                             .padding(.horizontal)
                         }
@@ -77,8 +137,14 @@ struct LeaderboardView: View {
                             
                             Spacer()
                             
-                            Text("\(user.steps)") // Ensure this matches the leaderboard type
+                            switch viewModel.leaderboardtype {
+                            case .points: Text("\(user.points)")
+                            case .calories: Text("\(user.calories)")
+                            case .steps: Text("\(user.steps)")
+                            case .distance: Text("\(user.distance)")
+                            }
                         }
+                        .padding(.horizontal)
                     }
                 }
                 .frame(maxHeight: .infinity, alignment: .top)

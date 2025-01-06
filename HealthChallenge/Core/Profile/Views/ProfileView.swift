@@ -25,7 +25,10 @@ struct ProfileView: View {
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .onAppear {
-            Task {await viewModel.fetchProfile()}
+            Task {
+                await viewModel.fetchProfile()
+                await viewModel.fetchUserStats()
+            }
             viewModel.determineTimeOfDay()
         }
         .alert("Ooops", isPresented: $viewModel.showAlert, actions: {

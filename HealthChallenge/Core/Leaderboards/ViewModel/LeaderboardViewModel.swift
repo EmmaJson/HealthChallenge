@@ -19,7 +19,9 @@ enum LeaderBoard: String {
 @Observable
 class LeaderboardViewModel {
     var showAlert = false
-    var title = "Leaderboard"
+    
+    let types = [LeaderBoard.points, LeaderBoard.calories, LeaderBoard.steps, LeaderBoard.distance]
+    var currentType: Int = 0
     var leaderboardtype = LeaderBoard.points
     
     var steps = 0.0
@@ -52,7 +54,7 @@ class LeaderboardViewModel {
             } catch {
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
-                    self.showAlert = true
+                    self.showAlert = false //Ssssssssssssssssssss
                 }
             }
         }
@@ -63,17 +65,18 @@ class LeaderboardViewModel {
         let top10: [LeaderboardUser]
         switch leaderboardtype {
         case .steps:
-            top10 = Array(leaders.sorted(by: { $0.steps > $1.steps }).prefix(10))
+            Logger.log("Entered Steps")
+            top10 = Array(leaders.sorted(by: { $0.steps > $1.steps }).prefix(8))
         case .calories:
-            top10 = Array(leaders.sorted(by: { $0.calories > $1.calories }).prefix(10))
+            top10 = Array(leaders.sorted(by: { $0.calories > $1.calories }).prefix(8))
         case .distance:
-            top10 = Array(leaders.sorted(by: { $0.distance > $1.distance }).prefix(10))
+            top10 = Array(leaders.sorted(by: { $0.distance > $1.distance }).prefix(8))
         case .points:
-            top10 = Array(leaders.sorted(by: { $0.points > $1.points }).prefix(10))
+            top10 = Array(leaders.sorted(by: { $0.points > $1.points }).prefix(8))
         }
         
         let username = UserDefaults.standard.string(forKey: "username")
-
+        
         if !top10.contains(where: { $0.username == username }) {
             let user = leaders.first(where: { $0.username == username })
             return LeaderboardResult(user: user, top10: top10)
@@ -81,7 +84,7 @@ class LeaderboardViewModel {
             return LeaderboardResult(user: nil, top10: top10)
         }
     }
-
+    
     enum LeaderBoardViewModelError: Error {
         case unableToFetchUsername
         case unableTooFetchLoggedInUserId
@@ -92,33 +95,94 @@ class LeaderboardViewModel {
         guard !userId.isEmpty else {
             throw LeaderBoardViewModelError.unableTooFetchLoggedInUserId
         }
-    
+        
         guard let username = UserDefaults.standard.string(forKey: "username") else {
             throw LeaderBoardViewModelError.unableToFetchUsername
         }
         do {
             self.steps =  try await fetchCurrentWeekStepCount()
-            self.calories = 0
-            self.distance = 0
-            self.points = 0
+            self.calories = try await fetchCurrentWeekCalories()
+            self.distance = try await fetchCurrentWeekDistance()
+            self.points = await fetchUserPoints()
         } catch {
             self.steps = 0
             self.calories = 0
             self.distance = 0
-            self.points = 0
         }
         try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: userId, username: username, calories: Int(calories), steps: Int(steps), distance: Int(distance), points: Int(points)))
-        
-        // MARK: Add mockdata for leaderboard
-        //try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "t8xV64HGDuNuWN9SMsb0TsXh5kk1", username: "Lova", count: Int(12323)))
-        //try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "YYKEJE5AMCND575bHLJN80L95yg1", username: "Julia", count: Int(9345)))
+    }
+    
+    func moveLeft() {
+        if currentType > 0 {
+            currentType -= 1
+            leaderboardtype = types[currentType]
+            updateLeaderboard(
+            )
+        }
+    }
+    
+    func moveRight() {
+        if currentType < 3 {
+            currentType += 1
+            leaderboardtype = types[currentType]
+            updateLeaderboard()
+        }
     }
     
     private func fetchCurrentWeekStepCount() async throws -> Double {
-        try await withCheckedThrowingContinuation({ continuation in
+        try await withCheckedThrowingContinuation { continuation in
             HealthKitManager.shared.fetchCurrentWeekStepCount { result in
-                continuation.resume(with: result)
+                switch result {
+                case .success(let stepCount):
+                    Logger.log("Fetched step count: \(stepCount)")
+                    continuation.resume(returning: stepCount)
+                case .failure(let error):
+                    Logger.log("Failed to fetch step count: \(error)")
+                    continuation.resume(throwing: error)
+                }
             }
-        })
+        }
+    }
+
+    private func fetchCurrentWeekCalories() async throws -> Double {
+        try await withCheckedThrowingContinuation { continuation in
+            HealthKitManager.shared.fetchCurrentWeekCalories { result in
+                switch result {
+                case .success(let caloriesBurned):
+                    Logger.log("Fetched calories: \(caloriesBurned)")
+                    continuation.resume(returning: caloriesBurned)
+                case .failure(let error):
+                    Logger.log("Failed to fetch calories: \(error)")
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    private func fetchCurrentWeekDistance() async throws -> Double {
+        try await withCheckedThrowingContinuation { continuation in
+            HealthKitManager.shared.fetchCurrentWeekDistance { result in
+                switch result {
+                case .success(let distanceCovered):
+                    Logger.log("Fetched distance: \(distanceCovered)")
+                    continuation.resume(returning: distanceCovered)
+                case .failure(let error):
+                    Logger.log("Failed to fetch distance: \(error)")
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
+    private func fetchUserPoints() async -> Double {
+        let userId = AuthenticationManager.shared.getAuthenticatedUserId()
+        do {
+            let stats = try await UserManager.shared.getUserStats(userId: userId)
+            return Double(stats.totalPoints)
+        } catch {
+            print("Failed to fetch user stats: \(error.localizedDescription)")
+            return 0
+        }
     }
 }
+
