@@ -41,9 +41,9 @@ struct DbUser: Codable {
         self.avatar = nil
         self.preferences = nil
         self.favouriteChallenge = nil
-        self.calorieGoal = 0
-        self.stepGoal = 0
-        self.distanceGoal = 0
+        self.calorieGoal = nil
+        self.stepGoal = nil
+        self.distanceGoal = nil
         self.activeChallenges = []
         self.pastChallenges = []
         self.points = 0

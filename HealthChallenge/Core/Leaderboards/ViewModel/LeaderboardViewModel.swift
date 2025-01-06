@@ -7,24 +7,30 @@
 
 import Foundation
 
+enum LeaderBoard: String {
+    case steps = "Steps"
+    case calories = "Calories"
+    case distance = "Distance"
+    case points = "Points"
+    
+    var id: String { rawValue }
+}
+
 @Observable
 class LeaderboardViewModel {
     var showAlert = false
+    var title = "Leaderboard"
+    var leaderboardtype = LeaderBoard.points
+    
     var steps = 0.0
+    var calories = 0.0
+    var distance = 0.0
+    var points = 0.0
     
     var leaderResult = LeaderboardResult(user: nil, top10: [])
     
     var mockData = [
-        LeaderboardUser(id: "1",  username: "Emma", count: 2342),
-        LeaderboardUser(id: "2",  username: "Lova", count: 2342),
-        LeaderboardUser(id: "3",  username: "Julia", count: 2342),
-        LeaderboardUser(id: "4",  username: "Julia2", count: 2342),
-        LeaderboardUser(id: "5",  username: "Lova2", count: 2342),
-        LeaderboardUser(id: "6",  username: "Emma2", count: 2342),
-        LeaderboardUser(id: "7",  username: "Julia3", count: 2342),
-        LeaderboardUser(id: "8",  username: "Lova3", count: 2342),
-        LeaderboardUser(id: "9",  username: "Emma3", count: 2342),
-        LeaderboardUser(id: "10", username: "Emma4", count: 2342),
+        LeaderboardUser(id: "test1", username: "Test 1", calories: 12032, steps: 70531, distance: 634, points: 20),
     ]
     
     struct LeaderboardResult {
@@ -54,7 +60,18 @@ class LeaderboardViewModel {
     
     private func fecthLeaderboard() async throws -> LeaderboardResult {
         let leaders = try await LeaderboardManager.sharded.fetchLeaderboards()
-        let top10 = Array(leaders.sorted(by: { $0.count > $1.count }).prefix(10))
+        let top10: [LeaderboardUser]
+        switch leaderboardtype {
+        case .steps:
+            top10 = Array(leaders.sorted(by: { $0.steps > $1.steps }).prefix(10))
+        case .calories:
+            top10 = Array(leaders.sorted(by: { $0.calories > $1.calories }).prefix(10))
+        case .distance:
+            top10 = Array(leaders.sorted(by: { $0.distance > $1.distance }).prefix(10))
+        case .points:
+            top10 = Array(leaders.sorted(by: { $0.points > $1.points }).prefix(10))
+        }
+        
         let username = UserDefaults.standard.string(forKey: "username")
 
         if !top10.contains(where: { $0.username == username }) {
@@ -81,11 +98,16 @@ class LeaderboardViewModel {
         }
         do {
             self.steps =  try await fetchCurrentWeekStepCount()
-
+            self.calories = 0
+            self.distance = 0
+            self.points = 0
         } catch {
             self.steps = 0
+            self.calories = 0
+            self.distance = 0
+            self.points = 0
         }
-        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: userId, username: username, count: Int(steps)))
+        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: userId, username: username, calories: Int(calories), steps: Int(steps), distance: Int(distance), points: Int(points)))
         
         // MARK: Add mockdata for leaderboard
         //try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "t8xV64HGDuNuWN9SMsb0TsXh5kk1", username: "Lova", count: Int(12323)))

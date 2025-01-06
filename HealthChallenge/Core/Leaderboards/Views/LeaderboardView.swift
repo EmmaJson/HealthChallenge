@@ -10,13 +10,16 @@ import SwiftUI
 struct LeaderboardUser: Codable, Identifiable {
     let id: String
     let username: String
-    let count: Int
+    let calories: Int
+    let steps: Int
+    let distance: Int
+    let points: Int
 }
 
 struct LeaderboardView: View {
     @AppStorage("username") var username: String?
     @State var viewModel = LeaderboardViewModel()
-        
+    
     @Binding var showTermsOfService: Bool
     
     var body: some View {
@@ -40,8 +43,11 @@ struct LeaderboardView: View {
                     }
                     .padding()
                     
-                    LazyVStack(spacing: 22){
-                        ForEach(Array(viewModel.leaderResult.top10.enumerated()), id: \.1.id) { (index, person) in
+                    // Break down the complex expression
+                    let leaderboardEntries = Array(viewModel.leaderResult.top10.enumerated())
+                    
+                    LazyVStack(spacing: 22) {
+                        ForEach(leaderboardEntries, id: \.1.id) { (index, person) in
                             HStack {
                                 Text("\(index + 1).")
                                 Text(person.username)
@@ -53,7 +59,7 @@ struct LeaderboardView: View {
                                 
                                 Spacer()
                                 
-                                Text("\(person.count)")
+                                Text("\(person.steps)") // Ensure this matches the leaderboard type
                             }
                             .padding(.horizontal)
                         }
@@ -71,18 +77,16 @@ struct LeaderboardView: View {
                             
                             Spacer()
                             
-                            Text("\(user.count)")
+                            Text("\(user.steps)") // Ensure this matches the leaderboard type
                         }
                     }
                 }
                 .frame(maxHeight: .infinity, alignment: .top)
-
                 
                 if showTermsOfService {
                     Color.background
                     TermsView(showTerms: $showTermsOfService)
                 }
-                
             }
         }
         .frame(maxHeight: .infinity, alignment: .top)

@@ -96,15 +96,31 @@ extension UserManager {
     }
     
     
-    func getUserGoals(userId: String) async throws -> (calorieGoal: Double, stepGoal: Double, distanceGoal: Double)? {
-        let user = try await getUser(userId: userId)
-        guard let calorieGoal = user.calorieGoal,
-              let stepGoal = user.stepGoal,
-              let distanceGoal = user.distanceGoal else {
-            return nil
+    /// Fetches user goals from Firestore
+        func getUserGoals(userId: String) async throws -> (calorieGoal: Double, stepGoal: Double, distanceGoal: Double)? {
+            do {
+                // Fetch the user document
+                let documentSnapshot = try await userDocument(userId: userId).getDocument()
+
+                guard let data = documentSnapshot.data() else {
+                    Logger.error("No data found for userId: \(userId)")
+                    return nil
+                }
+
+                // Decode the document into `DbUser`
+                let dbUser = try Firestore.Decoder().decode(DbUser.self, from: data)
+
+                // Return the goals
+                return (
+                    calorieGoal: dbUser.calorieGoal ?? 0,
+                    stepGoal: dbUser.stepGoal ?? 0,
+                    distanceGoal: dbUser.distanceGoal ?? 0
+                )
+            } catch {
+                Logger.error("Failed to fetch goals for userId \(userId): \(error.localizedDescription)")
+                throw error
+            }
         }
-        return (calorieGoal, stepGoal, distanceGoal)
-    }
 }
 
 // MARK: Profile

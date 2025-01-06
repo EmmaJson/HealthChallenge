@@ -17,7 +17,7 @@ struct HealthChallengeApp: App {
     @AppStorage("avatar") var avatar: String?
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @Environment(\.scenePhase) var scenePhase
-    @State private var showSignInView: Bool = false
+    @State private var showSignInView: Bool = true
     @State private var showLaunchView: Bool = true
     @State private var viewModel = AuthenticationViewModel()
     
@@ -26,11 +26,11 @@ struct HealthChallengeApp: App {
             ZStack {
                 //MARK: NAVSTACK-
                 NavigationStack {
-                    HomeTabView(showSignInView: $showSignInView)
+                    HomeTabView(showSignInView: .constant(showSignInView && !showLaunchView))
                         .toolbar {
                             ToolbarItem(placement: .topBarLeading) {
                                 NavigationLink {
-                                    ProfileView(showSignInView: $showSignInView)
+                                    ProfileView(showSignInView: .constant(showSignInView && !showLaunchView))
                                 } label: {
                                     ZStack {
                                         Circle()
@@ -48,7 +48,7 @@ struct HealthChallengeApp: App {
                             
                             ToolbarItem(placement: .topBarTrailing) {
                                 NavigationLink {
-                                    SettingsView(showSignInView: $showSignInView)
+                                    SettingsView(showSignInView: .constant(showSignInView && !showLaunchView))
                                 } label: {
                                     Image(systemName: "gear")
                                         .font(.headline)
@@ -73,40 +73,47 @@ struct HealthChallengeApp: App {
                         .task {
                             if !showSignInView {
                                 await fetchProfile()
+                                showSignInView = false
                             } else {
-                                Auth.auth().signInAnonymously { authResult, error in
-                                    if let error = error {
-                                        print("Error signing in anonymously: \(error.localizedDescription)")
-                                    } else if let userId = authResult?.user.uid {
-                                
-                                        print("Anonymous user signed in with ID: \(userId)")
-                                        Task {
-                                            let newUser = DbUser(
-                                                userId: userId,
-                                                isAnonymous: true,
-                                                dateCreated: Date(),
-                                                email: nil,
-                                                photoURL: nil,
-                                                username: "[Set a Name]",
-                                                avatar: "no avatar",
-                                                preferences: nil,
-                                                favouriteChallenge: nil,
-                                                calorieGoal: 0,
-                                                stepGoal: 0,
-                                                distanceGoal: 0,
-                                                activeChallenges: [],
-                                                pastChallenges: [],
-                                                points: 0
-                                            )
-                                            do {
-                                                try await UserManager.shared.createNewUser(user: newUser)
-                                                print("Anonymous user created in Firestore")
-                                            } catch {
-                                                print("Error creating user in Firestore: \(error.localizedDescription)")
+                                if  AuthenticationManager.shared.getAuthenticatedUserId() == " " {
+                                    Auth.auth().signInAnonymously { authResult, error in
+                                        if let error = error {
+                                            print("Error signing in anonymously: \(error.localizedDescription)")
+                                        } else if let userId = authResult?.user.uid {
+                                    
+                                            print("Anonymous user signed in with ID: \(userId)")
+                                            Task {
+                                                let newUser = DbUser(
+                                                    userId: userId,
+                                                    isAnonymous: true,
+                                                    dateCreated: Date(),
+                                                    email: nil,
+                                                    photoURL: nil,
+                                                    username: "[Set a Name]",
+                                                    avatar: "no avatar",
+                                                    preferences: nil,
+                                                    favouriteChallenge: nil,
+                                                    calorieGoal: 0,
+                                                    stepGoal: 0,
+                                                    distanceGoal: 0,
+                                                    activeChallenges: [],
+                                                    pastChallenges: [],
+                                                    points: 0
+                                                )
+                                                do {
+                                                    try await UserManager.shared.createNewUser(user: newUser)
+                                                    print("Anonymous user created in Firestore")
+                                                    showSignInView = false
+                                                } catch {
+                                                    print("Error creating user in Firestore: \(error.localizedDescription)")
+                                                }
                                             }
                                         }
                                     }
                                 }
+                                
+                                showSignInView = false
+                                
                             }
                         }
                 }

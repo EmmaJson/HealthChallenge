@@ -237,10 +237,11 @@ extension HomeViewModel {
         do {
             try await UserManager.shared.updateUserGoals(
                 userId: userId,
-                calorieGoal: round(calorieGoal),
-                stepGoal: round(stepGoal),
-                distanceGoal: round(distanceGoal)
+                calorieGoal: Double(calorieGoal),
+                stepGoal: Double(stepGoal),
+                distanceGoal: Double(distanceGoal)
             )
+            Logger.log("Saved goals")
         } catch {
             print("Failed to save goals: \(error.localizedDescription)")
         }
@@ -258,6 +259,7 @@ extension HomeViewModel {
                 self.distanceGoal = goals.distanceGoal
                 self.currentDistanceGoal = goals.distanceGoal
             }
+            Logger.log("Fetched goals")
         } catch {
             print("Failed to fetch goals: \(error.localizedDescription)")
         }

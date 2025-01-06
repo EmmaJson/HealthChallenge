@@ -86,11 +86,11 @@ struct HomeView: View {
                             .padding(.top)
                         
                         VStack {
-                            SliderView(title: "Calories Goal: ", unit: "kcal" , sliderValue: $viewModel.currentCalorieGoal, start: 100, stop: 2000, color: Color.theme.colorRed)
+                            SliderView(title: "Calories Goal: ", unit: "kcal" , sliderValue: $viewModel.currentCalorieGoal, start: 100, stop: 2000, steps: 100, color: Color.theme.colorRed)
                             
-                            SliderView(title: "Step Goal: ", unit: "" , sliderValue: $viewModel.currentStepGoal, start: 1000, stop: 20000, color: Color.theme.colorGreen)
+                            SliderView(title: "Step Goal: ", unit: "" , sliderValue: $viewModel.currentStepGoal, start: 1000, stop: 20000, steps: 1000, color: Color.theme.colorGreen)
                             
-                            SliderView(title: "Distance Goal: ", unit: "km" , sliderValue: $viewModel.currentDistanceGoal, start: 1, stop: 20, color: Color.theme.colorBlue)
+                            SliderView(title: "Distance Goal: ", unit: "km" , sliderValue: $viewModel.currentDistanceGoal, start: 1, stop: 20, steps: 1, color: Color.theme.colorBlue)
                         }
                         .padding()
                         
