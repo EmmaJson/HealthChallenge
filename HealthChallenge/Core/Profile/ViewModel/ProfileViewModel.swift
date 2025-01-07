@@ -33,6 +33,7 @@ final class ProfileViewModel {
         determineTimeOfDay()
         Task {
             await fetchProfile()
+            await fetchUserStats()
         }
     }
     
@@ -167,8 +168,8 @@ extension ProfileViewModel {
         do {
             let stats = try await UserManager.shared.getUserStats(userId: userId)
             DispatchQueue.main.async { [weak self] in
-                self?.completedChallenges = stats.completedChallenges
-                self?.totalPoints = stats.totalPoints
+                self?.completedChallenges = stats.0
+                self?.totalPoints = stats.1
             }
         } catch {
             print("Failed to fetch user stats: \(error.localizedDescription)")

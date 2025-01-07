@@ -178,7 +178,7 @@ class LeaderboardViewModel {
         let userId = AuthenticationManager.shared.getAuthenticatedUserId()
         do {
             let stats = try await UserManager.shared.getUserStats(userId: userId)
-            return Double(stats.totalPoints)
+            return Double(stats.1)
         } catch {
             print("Failed to fetch user stats: \(error.localizedDescription)")
             return 0

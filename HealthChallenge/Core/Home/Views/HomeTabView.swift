@@ -36,6 +36,13 @@ struct HomeTabView: View {
                     Text("Tasks")
                 }
             
+            NutrientsView()
+                .tag("Nutrients")
+                .tabItem {
+                    Image(systemName: "fork.knife")
+                    Text("Nutrients")
+                }
+            
             LeaderboardView(showTermsOfService: $showTermsView)
                 .tag("Leaderboard")
                 .tabItem {

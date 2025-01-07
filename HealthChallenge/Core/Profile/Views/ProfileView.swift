@@ -58,14 +58,8 @@ extension ProfileView {
                 VStack(alignment: .leading) {
                     
                     ProfileEditButton(image: "star", title: "Points Garthered: \(viewModel.totalPoints)") {
-                        withAnimation(.easeInOut(duration: 0.05)) {
-                            viewModel.presentEditImage()
-                        }
                     }
-                    ProfileEditButton(image: "trophy", title: "Challenges Completed: \(viewModel.totalPoints)") {
-                        withAnimation(.easeInOut(duration: 0.05)) {
-                            viewModel.presentEditImage()
-                        }
+                    ProfileEditButton(image: "trophy", title: "Challenges Completed: \(viewModel.completedChallenges)") {
                     }
                     
                     if viewModel.authenticationProviders.isEmpty {

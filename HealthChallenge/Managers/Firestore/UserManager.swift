@@ -392,7 +392,7 @@ extension UserManager {
 
 // MARK: UserStats for profile
 extension UserManager {
-    func getUserStats(userId: String) async throws -> (completedChallenges: Int, totalPoints: Int) {
+    func getUserStats(userId: String) async throws -> (Int, Int) {
         // Fetch the user's data
         let user = try await getUser(userId: userId)
         
