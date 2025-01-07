@@ -64,7 +64,7 @@ struct CreateChallengeView: View {
             VStack {
                 Text(dynamicLabel)
                     .font(.headline)
-                Slider(value: $distanceOrStepsValue, in: 0...40, step: 5)
+                Slider(value: $distanceOrStepsValue, in: 1...40, step: 1)
                     .accentColor(.blue)
             }
 

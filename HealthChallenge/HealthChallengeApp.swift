@@ -23,7 +23,10 @@ struct HealthChallengeApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ZStack {
+            
+            NutrientsView()
+            
+            /*ZStack {
                 //MARK: NAVSTACK-
                 NavigationStack {
                     HomeTabView(showSignInView: .constant(showSignInView && !showLaunchView))
@@ -127,7 +130,7 @@ struct HealthChallengeApp: App {
                     }
                 }
                 .zIndex(2.0)
-            }
+            }*/
         }
     }
     

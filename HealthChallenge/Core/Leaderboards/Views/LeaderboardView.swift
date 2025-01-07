@@ -7,15 +7,6 @@
 
 import SwiftUI
 
-struct LeaderboardUser: Codable, Identifiable {
-    let id: String
-    let username: String
-    let calories: Int
-    let steps: Int
-    let distance: Int
-    let points: Int
-}
-
 struct LeaderboardView: View {
     @AppStorage("username") var username: String?
     @State var viewModel = LeaderboardViewModel()

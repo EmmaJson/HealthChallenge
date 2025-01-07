@@ -64,32 +64,23 @@ class OpenAIService {
         
         print(String(data: data, encoding: .utf8)!)
     }
+    
+    
 }
 
-struct GPTChatpayload: Encodable {
-    let model: String
-    let messages: [GPTMessage]
-    let functions: [GPTFunction]
+struct GPTResponse: Decodable {
+    let choices: [Choice]
 }
 
-struct GPTMessage: Encodable {
-    let role: String
-    let content: String
+struct GPT: Decodable {
+    let message: Message
 }
 
-struct GPTFunction: Encodable {
+struct Message: Decodable {
+    let function_call: FunctionCall?
+}
+
+struct FunctionCall: Decodable {
     let name: String
-    let description: String
-    let parameters: GPTFuncionParameter
-}
-
-struct GPTFuncionParameter: Encodable {
-    let type: String
-    let properties: [String: GPTFunctionProperty]?
-    let required: [String]?
-}
-
-struct GPTFunctionProperty: Encodable {
-    let type: String
-    let description: String
+    let arguments: String
 }

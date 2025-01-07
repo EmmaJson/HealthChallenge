@@ -110,6 +110,18 @@ class LeaderboardViewModel {
             self.distance = 0
         }
         try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: userId, username: username, calories: Int(calories), steps: Int(steps), distance: Int(distance), points: Int(points)))
+        /*try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader: LeaderboardUser(id: "USER 1", username: "Alice", calories: 400, steps: 2304, distance: 2, points: 10))
+        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader:LeaderboardUser(id: "USER 2", username: "Bob", calories: 350, steps: 1800, distance: 1, points: 8))
+        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader:LeaderboardUser(id: "USER 3", username: "Charlie", calories: 500, steps: 3200, distance: 3, points: 12))
+        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader:LeaderboardUser(id: "USER 4", username: "Diana", calories: 450, steps: 2500, distance: 2, points: 11))
+        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader:LeaderboardUser(id: "USER 5", username: "Eve", calories: 300, steps: 1500, distance: 1, points: 7))
+        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader:LeaderboardUser(id: "USER 6", username: "Frank", calories: 550, steps: 4000, distance: 4, points: 15))
+        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader:LeaderboardUser(id: "USER 7", username: "Grace", calories: 420, steps: 2800, distance: 2, points: 10))
+        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader:LeaderboardUser(id: "USER 8", username: "Hank", calories: 380, steps: 2100, distance: 1, points: 9))
+        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader:LeaderboardUser(id: "USER 9", username: "Ivy", calories: 470, steps: 3000, distance: 3, points: 13))
+        try await LeaderboardManager.sharded.postStepCountUpdateForUser(leader:LeaderboardUser(id: "USER 10", username: "Jack", calories: 600, steps: 5000, distance: 5, points: 20))
+            
+         */
     }
     
     func moveLeft() {

@@ -54,7 +54,7 @@ struct NutrientsView: View {
         .task {
             do {
                 print("Fetch nutrient")
-                //try await OpenAIService.shared.sendPromptToGPT(message: "a glass of milk 1% fat")
+                try await OpenAIService.shared.sendPromptToGPT(message: "Carbonara")
             } catch {
                 print(error.localizedDescription)
             }
