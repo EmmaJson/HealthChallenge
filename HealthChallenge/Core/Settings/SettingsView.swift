@@ -9,8 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     let defaultURL = URL(string: "https://www.google.com")!
-    //let githubURL = URL(string: "https://github.com/EmmaJson/HealthChallenge")
-    let githubURL = URL(string: "https://github.com/EmmaJson")!
+    let githubURL = URL(string: "https://github.com/EmmaJson/HealthChallenge")!
     let flaticonURL = URL(string: "https://www.flaticon.com/authors/roundicons")!
     
     @State private var viewModel = AuthenticationViewModel()

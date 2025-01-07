@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ProfileView: View {
+    let serviceURL = URL(string: "https://github.com/EmmaJson/HealthChallenge/blob/main/Documents/HealthChallenge%20-%20Terms%20of%20Use.pdf")!
+    let policyURL = URL(string: "https://github.com/EmmaJson/HealthChallenge/blob/main/Documents/HealthChallenge%20-%20Privacy%20Policy.pdf")!
+    
     @State private var viewModel = ProfileViewModel()
     @Binding var showSignInView: Bool
     
@@ -216,7 +219,7 @@ extension ProfileView {
                     viewModel.presentEmail()
                 }
                 
-                Link(destination: URL(string: "https://github.com/EmmaJson/HealthChallenge/blob/main/Documents/HealthChallenge%20-%20Terms%20of%20Use.pdf")!) {
+                Link(destination: serviceURL) {
                     HStack {
                         Image(systemName: "text.document")
                         Text("Terms of Service")
@@ -226,7 +229,7 @@ extension ProfileView {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 
-                Link(destination: URL(string: "https://github.com/EmmaJson/HealthChallenge/blob/main/Documents/HealthChallenge%20-%20Privacy%20Policy.pdf")!) {
+                Link(destination: policyURL) {
                     HStack {
                         Image(systemName: "text.document")
                         Text("Privacy Policy")
