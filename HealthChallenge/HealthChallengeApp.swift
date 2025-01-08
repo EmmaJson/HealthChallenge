@@ -10,9 +10,22 @@ import Firebase
 import FirebaseMessaging
 import UserNotifications
 import FirebaseAuth
+import SwiftData
 
 @main
 struct HealthChallengeApp: App {
+    var sharedModelContainer: ModelContainer {
+        let schema = Schema([
+            NutrientModel.self,
+        ])
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        do {
+            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+    }
+    
     @AppStorage("username") var username: String?
     @AppStorage("avatar") var avatar: String?
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
@@ -23,10 +36,7 @@ struct HealthChallengeApp: App {
     
     var body: some Scene {
         WindowGroup {
-            
-            NutrientsView()
-            
-            /*ZStack {
+            ZStack {
                 //MARK: NAVSTACK-
                 NavigationStack {
                     HomeTabView(showSignInView: .constant(showSignInView && !showLaunchView))
@@ -130,8 +140,9 @@ struct HealthChallengeApp: App {
                     }
                 }
                 .zIndex(2.0)
-            }*/
+            }
         }
+        .modelContainer(sharedModelContainer)
     }
     
     func fetchProfile() async {
