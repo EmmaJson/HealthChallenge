@@ -8,6 +8,17 @@
 import Foundation
 
 extension Date {
+    var monthAndDate: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+        return formatter.string(from: self)
+    }
+    
+    var time: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: self)
+    }
     
     var iso8601String: String {
         let formatter = ISO8601DateFormatter()
